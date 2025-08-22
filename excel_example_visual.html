@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Data Spreadsheet Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #34113f 0%, #aba9bf 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .spreadsheet {
+            margin: 20px;
+            border: 2px solid #aba9bf;
+            border-radius: 4px;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .excel-row {
+            display: grid;
+            grid-template-columns: 40px repeat(8, 1fr);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .excel-row:last-child {
+            border-bottom: none;
+        }
+
+        .row-number {
+            background: #f1f5f9;
+            border-right: 1px solid #e2e8f0;
+            padding: 8px 6px;
+            text-align: center;
+            font-weight: bold;
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .cell {
+            border-right: 1px solid #e2e8f0;
+            padding: 8px 10px;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .cell:last-child {
+            border-right: none;
+        }
+
+        .header-cell {
+            background: #34113f;
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .data-cell {
+            background: white;
+            color: #1e293b;
+        }
+
+        .data-cell.highlight {
+            background: #f7fcf6;
+        }
+
+        .legend {
+            margin: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #d4f2d2;
+        }
+
+        .legend h3 {
+            margin: 0 0 15px 0;
+            color: #34113f;
+            font-size: 1.1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .best-practices {
+            margin: 20px;
+            padding: 20px;
+            background: #f0f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #beb7df;
+        }
+
+        .best-practices h3 {
+            margin: 0 0 15px 0;
+            color: #34113f;
+            font-size: 1.1rem;
+        }
+
+        .best-practices ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #475569;
+        }
+
+        .best-practices li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .spreadsheet {
+                font-size: 10px;
+                margin: 10px;
+            }
+            
+            .cell {
+                padding: 6px 4px;
+            }
+            
+            .excel-row {
+                grid-template-columns: 30px repeat(8, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Well-Structured Educational Data Example</h1>
+            <p>Notice the clear headers, consistent formatting, and logical organization</p>
+        </div>
+
+        <div class="spreadsheet">
+            <!-- Header Row -->
+            <div class="excel-row">
+                <div class="row-number">1</div>
+                <div class="cell header-cell">Student_ID</div>
+                <div class="cell header-cell">First_Name</div>
+                <div class="cell header-cell">Last_Name</div>
+                <div class="cell header-cell">Email_Address</div>
+                <div class="cell header-cell">Enrollment_Date</div>
+                <div class="cell header-cell">Program</div>
+                <div class="cell header-cell">Status</div>
+                <div class="cell header-cell">Credits_Completed</div>
+            </div>
+
+            <!-- Data Rows -->
+            <div class="excel-row">
+                <div class="row-number">2</div>
+                <div class="cell data-cell">STU-2024-001</div>
+                <div class="cell data-cell">Sarah</div>
+                <div class="cell data-cell">Johnson</div>
+                <div class="cell data-cell">s.johnson@university.edu</div>
+                <div class="cell data-cell">08/22/2024</div>
+                <div class="cell data-cell">Computer Science</div>
+                <div class="cell data-cell highlight">Active</div>
+                <div class="cell data-cell">45</div>
+            </div>
+
+            <div class="excel-row">
+                <div class="row-number">3</div>
+                <div class="cell data-cell">STU-2024-002</div>
+                <div class="cell data-cell">Michael</div>
+                <div class="cell data-cell">Chen</div>
+                <div class="cell data-cell">m.chen@university.edu</div>
+                <div class="cell data-cell">08/22/2024</div>
+                <div class="cell data-cell">Business Administration</div>
+                <div class="cell data-cell highlight">Active</div>
+                <div class="cell data-cell">32</div>
+            </div>
+
+            <div class="excel-row">
+                <div class="row-number">4</div>
+                <div class="cell data-cell">STU-2024-003</div>
+                <div class="cell data-cell">Emily</div>
+                <div class="cell data-cell">Rodriguez</div>
+                <div class="cell data-cell">e.rodriguez@university.edu</div>
+                <div class="cell data-cell">01/15/2024</div>
+                <div class="cell data-cell">Psychology</div>
+                <div class="cell data-cell highlight">Active</div>
+                <div class="cell data-cell">78</div>
+            </div>
+
+            <div class="excel-row">
+                <div class="row-number">5</div>
+                <div class="cell data-cell">STU-2023-045</div>
+                <div class="cell data-cell">David</div>
+                <div class="cell data-cell">Williams</div>
+                <div class="cell data-cell">d.williams@university.edu</div>
+                <div class="cell data-cell">08/28/2023</div>
+                <div class="cell data-cell">Engineering</div>
+                <div class="cell data-cell">Graduated</div>
+                <div class="cell data-cell">120</div>
+            </div>
+
+            <div class="excel-row">
+                <div class="row-number">6</div>
+                <div class="cell data-cell">STU-2024-004</div>
+                <div class="cell data-cell">Jessica</div>
+                <div class="cell data-cell">Thompson</div>
+                <div class="cell data-cell">j.thompson@university.edu</div>
+                <div class="cell data-cell">08/22/2024</div>
+                <div class="cell data-cell">Nursing</div>
+                <div class="cell data-cell highlight">Active</div>
+                <div class="cell data-cell">18</div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>✅ What Makes This Structure Effective</h3>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #34113f;"></div>
+                <span><strong>Clear Headers:</strong> Descriptive, consistent naming with underscores instead of spaces</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f7fcf6; border: 2px solid #d4f2d2;"></div>
+                <span><strong>Consistent Data:</strong> Same format throughout each column (dates, status values)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: white;"></div>
+                <span><strong>One Record Per Row:</strong> Each student gets exactly one row with all their information</span>
+            </div>
+        </div>
+
+        <div class="best-practices">
+            <h3>🎯 Key Structure Principles Demonstrated</h3>
+            <ul>
+                <li><strong>Unique Identifiers:</strong> Student_ID ensures no duplicate records</li>
+                <li><strong>Separate Name Fields:</strong> First and last names in different columns for sorting flexibility</li>
+                <li><strong>Date Consistency:</strong> All dates follow MM/DD/YYYY format</li>
+                <li><strong>Standardized Values:</strong> Status field uses consistent options (Active, Graduated, etc.)</li>
+                <li><strong>Numeric Data:</strong> Credits are stored as numbers for easy calculation</li>
+                <li><strong>No Empty Spaces:</strong> Every record has complete information</li>
+                <li><strong>Logical Column Order:</strong> ID first, then identifying info, then program details</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
