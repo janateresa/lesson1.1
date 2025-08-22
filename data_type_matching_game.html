@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Type Matching Exercise</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #beb7df 0%, #aba9bf 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(52, 17, 63, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #34113f 0%, #aba9bf 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+            min-height: 600px;
+        }
+
+        .column {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 30px;
+            border: 2px solid #aba9bf;
+        }
+
+        .column h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #34113f;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .data-item {
+            background: white;
+            margin: 12px 0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: move;
+            border: 2px solid #beb7df;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(52, 17, 63, 0.05);
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .data-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 17, 63, 0.1);
+            border-color: #aba9bf;
+        }
+
+        .data-item.dragging {
+            opacity: 0.7;
+            transform: rotate(5deg);
+            z-index: 1000;
+        }
+
+        .column-header {
+            background: white;
+            margin: 12px 0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 2px dashed #868784;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #34113f;
+            transition: all 0.3s ease;
+        }
+
+        .column-header.drag-over {
+            background: #f7fcf6;
+            border-color: #d4f2d2;
+            border-style: solid;
+        }
+
+        .column-header.matched {
+            background: #f7fcf6;
+            border-color: #d4f2d2;
+            border-style: solid;
+        }
+
+        .column-header.matched .data-item {
+            background: #f7fcf6;
+            border-color: #d4f2d2;
+            color: #34113f;
+        }
+
+        .feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 350px;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+            font-weight: 500;
+        }
+
+        .feedback.show {
+            transform: translateX(0);
+        }
+
+        .feedback.success {
+            background: #f7fcf6;
+            color: #34113f;
+            border-left: 4px solid #d4f2d2;
+        }
+
+        .feedback.error {
+            background: #f2f1f9;
+            color: #34113f;
+            border-left: 4px solid #aba9bf;
+        }
+
+        .progress {
+            background: #eeeef2;
+            height: 8px;
+            border-radius: 4px;
+            margin: 30px 40px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #beb7df 0%, #d4f2d2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .reset-btn {
+            display: block;
+            margin: 20px auto 40px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #34113f 0%, #aba9bf 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 17, 63, 0.3);
+        }
+
+        .completion-message {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f7fcf6 0%, #eeeef2 100%);
+            margin: 20px 40px;
+            border-radius: 12px;
+            display: none;
+            color: #34113f;
+        }
+
+        .completion-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .feedback {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Data Type Matching Exercise</h1>
+            <p>Drag each data example to its appropriate column header</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="game-area">
+            <div class="column">
+                <h2>🏷️ Column Headers</h2>
+                <div class="column-headers" id="columnHeaders">
+                    <div class="column-header" data-accepts="STU-2024-001">Student ID</div>
+                    <div class="column-header" data-accepts="john.smith@university.edu">Email Address</div>
+                    <div class="column-header" data-accepts="87.5">Course Grade (%)</div>
+                    <div class="column-header" data-accepts="Active">Enrollment Status</div>
+                    <div class="column-header" data-accepts="Computer Science">Major</div>
+                    <div class="column-header" data-accepts="TRUE">Financial Aid Received (Yes/No)</div>
+                    <div class="column-header" data-accepts="$1,250.00">Tuition Amount</div>
+                    <div class="column-header" data-accepts="03/15/2024">Registration Date</div>
+                </div>
+            </div>
+
+            <div class="column">
+                <h2>📊 Data Examples</h2>
+                <div class="data-items" id="dataItems">
+                    <div class="data-item" draggable="true" data-value="03/15/2024">03/15/2024</div>
+                    <div class="data-item" draggable="true" data-value="john.smith@university.edu">john.smith@university.edu</div>
+                    <div class="data-item" draggable="true" data-value="87.5">87.5</div>
+                    <div class="data-item" draggable="true" data-value="STU-2024-001">STU-2024-001</div>
+                    <div class="data-item" draggable="true" data-value="Active">Active</div>
+                    <div class="data-item" draggable="true" data-value="Computer Science">Computer Science</div>
+                    <div class="data-item" draggable="true" data-value="TRUE">TRUE</div>
+                    <div class="data-item" draggable="true" data-value="$1,250.00">$1,250.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="completion-message" id="completionMessage">
+            <h2>🎉 Excellent Work!</h2>
+            <p>You've successfully matched all data types to their appropriate column headers. You now understand how proper data structure makes information more accessible and useful for analysis.</p>
+        </div>
+
+        <button class="reset-btn" onclick="resetGame()">🔄 Try Again</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <script>
+        const feedbackMessages = {
+            "03/15/2024": "Perfect! Dates should always be in a consistent format and clearly labeled with what the date represents.",
+            "john.smith@university.edu": "Excellent! Email addresses are unique identifiers that help with communication and data verification.",
+            "87.5": "Great choice! Numeric grades should be in their own column for easy calculation and analysis.",
+            "STU-2024-001": "Correct! Unique identifiers like student IDs are essential for tracking and avoiding duplicate records.",
+            "Active": "Right on! Status fields help you quickly filter and analyze current vs. inactive records.",
+            "Computer Science": "Perfect! Categorical data like majors should be consistent and use standard department names.",
+            "TRUE": "Excellent! Boolean data (Yes/No, True/False) works great for tracking binary conditions.",
+            "$1,250.00": "Correct! Financial data should be formatted consistently and clearly labeled."
+        };
+
+        let correctMatches = 0;
+        const totalMatches = 8;
+
+        // Drag and drop functionality
+        let draggedItem = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const dataItems = document.querySelectorAll('.data-item');
+            const columnHeaders = document.querySelectorAll('.column-header');
+
+            dataItems.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+
+            columnHeaders.forEach(header => {
+                header.addEventListener('dragover', handleDragOver);
+                header.addEventListener('dragenter', handleDragEnter);
+                header.addEventListener('dragleave', handleDragLeave);
+                header.addEventListener('drop', handleDrop);
+            });
+        });
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (draggedItem) {
+                const draggedValue = draggedItem.getAttribute('data-value');
+                const acceptedValue = this.getAttribute('data-accepts');
+
+                if (draggedValue === acceptedValue) {
+                    // Correct match
+                    this.innerHTML = '';
+                    this.appendChild(draggedItem.cloneNode(true));
+                    this.classList.add('matched');
+                    draggedItem.style.display = 'none';
+                    
+                    correctMatches++;
+                    updateProgress();
+                    showFeedback(feedbackMessages[draggedValue], true);
+                    
+                    if (correctMatches === totalMatches) {
+                        setTimeout(showCompletion, 500);
+                    }
+                } else {
+                    // Incorrect match
+                    showFeedback("Not quite right. Consider what type of information this is and how you'd want to sort or filter it. Try again!", false);
+                }
+            }
+
+            return false;
+        }
+
+        function showFeedback(message, isSuccess) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = message;
+            feedback.className = `feedback ${isSuccess ? 'success' : 'error'} show`;
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 4000);
+        }
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const percentage = (correctMatches / totalMatches) * 100;
+            progressBar.style.width = percentage + '%';
+        }
+
+        function showCompletion() {
+            document.getElementById('completionMessage').classList.add('show');
+        }
+
+        function resetGame() {
+            // Reset all variables
+            correctMatches = 0;
+            
+            // Reset progress bar
+            document.getElementById('progressBar').style.width = '0%';
+            
+            // Reset column headers
+            const columnHeaders = document.querySelectorAll('.column-header');
+            columnHeaders.forEach(header => {
+                header.classList.remove('matched');
+                header.innerHTML = header.getAttribute('data-accepts') === 'STU-2024-001' ? 'Student ID' :
+                                header.getAttribute('data-accepts') === 'john.smith@university.edu' ? 'Email Address' :
+                                header.getAttribute('data-accepts') === '87.5' ? 'Course Grade (%)' :
+                                header.getAttribute('data-accepts') === 'Active' ? 'Enrollment Status' :
+                                header.getAttribute('data-accepts') === 'Computer Science' ? 'Major' :
+                                header.getAttribute('data-accepts') === 'TRUE' ? 'Financial Aid Received (Yes/No)' :
+                                header.getAttribute('data-accepts') === '$1,250.00' ? 'Tuition Amount' :
+                                'Registration Date';
+            });
+            
+            // Reset data items
+            const dataItems = document.querySelectorAll('.data-item');
+            dataItems.forEach(item => {
+                item.style.display = 'block';
+            });
+            
+            // Hide completion message
+            document.getElementById('completionMessage').classList.remove('show');
+            
+            // Hide feedback
+            document.getElementById('feedback').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
