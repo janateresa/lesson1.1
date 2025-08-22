@@ -30,55 +30,56 @@
         .header {
             background: linear-gradient(135deg, #34113f 0%, #aba9bf 100%);
             color: white;
-            padding: 30px;
+            padding: 20px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
             font-weight: 700;
         }
 
         .header p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             opacity: 0.9;
         }
 
         .game-area {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            padding: 40px;
-            min-height: 600px;
+            gap: 20px;
+            padding: 20px;
+            min-height: auto;
         }
 
         .column {
             background: #f8fafc;
-            border-radius: 12px;
-            padding: 30px;
+            border-radius: 8px;
+            padding: 20px;
             border: 2px solid #aba9bf;
         }
 
         .column h2 {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             color: #34113f;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 600;
         }
 
         .data-item {
             background: white;
-            margin: 12px 0;
-            padding: 15px 20px;
-            border-radius: 8px;
+            margin: 6px 0;
+            padding: 10px 15px;
+            border-radius: 6px;
             cursor: move;
             border: 2px solid #beb7df;
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(52, 17, 63, 0.05);
             font-weight: 500;
             user-select: none;
+            font-size: 0.9rem;
         }
 
         .data-item:hover {
@@ -95,17 +96,19 @@
 
         .column-header {
             background: white;
-            margin: 12px 0;
-            padding: 15px 20px;
-            border-radius: 8px;
+            margin: 6px 0;
+            padding: 10px 15px;
+            border-radius: 6px;
             border: 2px dashed #868784;
-            min-height: 60px;
+            min-height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
             color: #34113f;
             transition: all 0.3s ease;
+            font-size: 0.9rem;
+            text-align: center;
         }
 
         .column-header.drag-over {
@@ -158,9 +161,9 @@
 
         .progress {
             background: #eeeef2;
-            height: 8px;
-            border-radius: 4px;
-            margin: 30px 40px;
+            height: 6px;
+            border-radius: 3px;
+            margin: 15px 20px;
             overflow: hidden;
         }
 
