@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Your Portfolio: COUNT Formula Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Avenir', 'Avenir Next', system-ui, -apple-system, sans-serif;
+            background: #868784;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #34113f;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .portfolio-header {
+            background: linear-gradient(45deg, #beb7df, #ddd4f0);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #34113f;
+            color: #34113f;
+        }
+        
+        .portfolio-header h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            border-left: 5px solid #beb7df;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section h3 {
+            color: #34113f;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .download-btn {
+            background: linear-gradient(45deg, #d4f2d2, #a8d8a6);
+            color: #2d5016;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 242, 210, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 242, 210, 0.4);
+        }
+        
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+        
+        .step-list li {
+            counter-increment: step-counter;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #beb7df;
+            position: relative;
+        }
+        
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -15px;
+            top: 15px;
+            background: #34113f;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .formula-example {
+            background: #34113f;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            margin: 10px 0;
+            border-left: 4px solid #d4f2d2;
+        }
+        
+        .formula-type {
+            display: inline-block;
+            background: #beb7df;
+            color: #34113f;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin: 5px 5px 10px 0;
+        }
+        
+        .tip-box {
+            background: linear-gradient(45deg, #aba9bf, #c0bdd3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: white;
+            border-left: 4px solid #34113f;
+        }
+        
+        .tip-box h4 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .portfolio-criteria {
+            background: linear-gradient(45deg, #d4f2d2, #c8ecc6);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: #2d5016;
+            border-left: 4px solid #2d5016;
+        }
+        
+        .portfolio-criteria h4 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .portfolio-criteria ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .portfolio-criteria li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .portfolio-criteria li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2d5016;
+            font-weight: bold;
+        }
+        
+        .data-preview {
+            background: #f8f9fa;
+            border: 2px solid #aba9bf;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #aba9bf;
+        }
+        
+        .data-table th {
+            background: #34113f;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .data-table tr:hover {
+            background: #beb7df;
+            color: white;
+        }
+        
+        .empty-cell {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .step-list li {
+                padding-left: 35px;
+            }
+            
+            .data-preview {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📁 For Your Portfolio: Student Engagement Analysis</h1>
+        
+        <div class="portfolio-header">
+            <h2>🎯 Project Overview</h2>
+            <p>Create a professional Excel analysis that demonstrates your mastery of COUNT, COUNTA, and COUNTIF formulas while analyzing real LMS student engagement data. This project showcases your ability to track participation, completion rates, and student performance using the counting formulas that educational professionals use daily.</p>
+        </div>
+
+        <!-- Template Download Section -->
+        <div class="section">
+            <h3>📥 Step 1: Download Your LMS Data Template</h3>
+            <p>Start with our realistic LMS dataset from "Psychology 101" containing authentic student engagement metrics:</p>
+            
+            <button class="download-btn" onclick="downloadTemplate()">
+                📊 Download LMS Engagement Data
+            </button>
+            
+            <div class="tip-box">
+                <h4>💡 Template Contents - Real LMS Data</h4>
+                <p>The template includes 30 students with:</p>
+                <ul>
+                    <li>• Student names and ID numbers</li>
+                    <li>• Assignment submissions (some missing/incomplete)</li>
+                    <li>• Quiz scores (numeric values and blanks)</li>
+                    <li>• Discussion participation (Yes/No/Partial)</li>
+                    <li>• Attendance tracking (Present/Absent/Excused)</li>
+                    <li>• Course status (Active/Inactive/Withdrawn)</li>
+                    <li>• Final grades (A, B, C, D, F, Incomplete)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Data Preview Section -->
+        <div class="section">
+            <h3>👀 LMS Data Preview</h3>
+            <div class="data-preview">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Student ID</th>
+                            <th>Quiz 1</th>
+                            <th>Quiz 2</th>
+                            <th>Discussion</th>
+                            <th>Attendance</th>
+                            <th>Status</th>
+                            <th>Final Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sarah Johnson</td>
+                            <td>SJ2024001</td>
+                            <td>85</td>
+                            <td>92</td>
+                            <td>Yes</td>
+                            <td>Present</td>
+                            <td>Active</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Michael Chen</td>
+                            <td>MC2024002</td>
+                            <td>78</td>
+                            <td class="empty-cell">-</td>
+                            <td>Partial</td>
+                            <td>Absent</td>
+                            <td>Active</td>
+                            <td>B</td>
+                        </tr>
+                        <tr>
+                            <td>Emma Rodriguez</td>
+                            <td>ER2024003</td>
+                            <td class="empty-cell">-</td>
+                            <td>89</td>
+                            <td>No</td>
+                            <td>Excused</td>
+                            <td>Inactive</td>
+                            <td>Incomplete</td>
+                        </tr>
+                        <tr>
+                            <td>David Kim</td>
+                            <td>DK2024004</td>
+                            <td>94</td>
+                            <td>87</td>
+                            <td>Yes</td>
+                            <td>Present</td>
+                            <td>Active</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td colspan="7" style="text-align: right; font-weight: bold;">Analytics Section:</td>
+                            <td>[Your formulas here]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Instructions Section -->
+        <div class="section">
+            <h3>📋 Step 2: Complete Your Analysis</h3>
+            <p>You'll create a comprehensive engagement analysis using all three COUNT formulas:</p>
+            
+            <ol class="step-list">
+                <li>
+                    <strong>Open the template</strong> in Excel or Google Sheets
+                    <div class="formula-example">File → Open → Select downloaded LMS template</div>
+                </li>
+                
+                <li>
+                    <strong>Create Basic Counts Section</strong> - Use these formulas:
+                    <div class="formula-type">COUNTA</div>
+                    <div class="formula-example">=COUNTA(A2:A31)</div>
+                    <p>Count total enrolled students (any data in name column)</p>
+                    
+                    <div class="formula-type">COUNT</div>
+                    <div class="formula-example">=COUNT(C2:C31)</div>
+                    <p>Count Quiz 1 numeric submissions (excludes missing/blank)</p>
+                    
+                    <div class="formula-example">=COUNT(D2:D31)</div>
+                    <p>Count Quiz 2 numeric submissions</p>
+                </li>
+                
+                <li>
+                    <strong>Create Participation Analysis</strong> - Use COUNTIF formulas:
+                    <div class="formula-type">COUNTIF</div>
+                    <div class="formula-example">=COUNTIF(E2:E31,"Yes")</div>
+                    <p>Count active discussion participants</p>
+                    
+                    <div class="formula-example">=COUNTIF(F2:F31,"Present")</div>
+                    <p>Count students with perfect attendance</p>
+                    
+                    <div class="formula-example">=COUNTIF(G2:G31,"Active")</div>
+                    <p>Count currently active students</p>
+                </li>
+                
+                <li>
+                    <strong>Create Performance Metrics</strong> - Advanced COUNTIF:
+                    <div class="formula-type">COUNTIF</div>
+                    <div class="formula-example">=COUNTIF(C2:C31,">85")</div>
+                    <p>Count high Quiz 1 scores (above 85)</p>
+                    
+                    <div class="formula-example">=COUNTIF(H2:H31,"A")</div>
+                    <p>Count students earning A grades</p>
+                    
+                    <div class="formula-example">=COUNTIF(H2:H31,"Incomplete")</div>
+                    <p>Count incomplete students needing follow-up</p>
+                </li>
+                
+                <li>
+                    <strong>Add Professional Summary</strong>
+                    <p>Write 3-4 sentences analyzing the data: completion rates, participation patterns, performance insights</p>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Portfolio Requirements -->
+        <div class="section">
+            <h3>✅ Step 3: Portfolio Requirements</h3>
+            <div class="portfolio-criteria">
+                <h4>Your completed analysis must include:</h4>
+                <ul>
+                    <li>COUNTA formula counting total enrolled students</li>
+                    <li>COUNT formulas for both quiz submission counts</li>
+                    <li>COUNTIF formulas for participation metrics (3 different criteria)</li>
+                    <li>COUNTIF formulas for performance analysis (3 different criteria)</li>
+                    <li>Professional formatting with clear section headers</li>
+                    <li>Written summary analyzing engagement patterns</li>
+                    <li>Your name, date, and course information</li>
+                    <li>File saved as "YourName_Student_Engagement_Analysis.xlsx"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Expected Results -->
+        <div class="section">
+            <h3>🎯 Expected Results Guide</h3>
+            <div class="tip-box">
+                <h4>📊 Your Analysis Should Show:</h4>
+                <ul>
+                    <li>• <strong>Total Students:</strong> 30 (using COUNTA)</li>
+                    <li>• <strong>Quiz Submissions:</strong> Different counts for Quiz 1 vs Quiz 2</li>
+                    <li>• <strong>Active Participants:</strong> Students engaging in discussions</li>
+                    <li>• <strong>Attendance Patterns:</strong> Present vs Absent vs Excused</li>
+                    <li>• <strong>Performance Distribution:</strong> Grade breakdowns and high scorers</li>
+                    <li>• <strong>At-Risk Students:</strong> Inactive or incomplete status</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Submission Section -->
+        <div class="section">
+            <h3>📤 Step 4: Save for Your Portfolio</h3>
+            <ol class="step-list">
+                <li>
+                    <strong>Save your completed file</strong>
+                    <div class="formula-example">File → Save As → "YourName_Student_Engagement_Analysis.xlsx"</div>
+                </li>
+                
+                <li>
+                    <strong>Take a screenshot</strong> of your completed analysis showing all formulas and results
+                </li>
+                
+                <li>
+                    <strong>Export as PDF</strong> for easy portfolio viewing
+                    <div class="formula-example">File → Export → Create PDF/XPS</div>
+                </li>
+                
+                <li>
+                    <strong>Document your insights</strong> - Write 3-4 sentences about what the COUNT formulas revealed about student engagement
+                </li>
+            </ol>
+            
+            <div class="tip-box">
+                <h4>🎨 Portfolio Presentation Tips</h4>
+                <ul>
+                    <li>• Create clear section headers: "Basic Counts", "Participation Analysis", "Performance Metrics"</li>
+                    <li>• Use consistent formatting and colors</li>
+                    <li>• Add percentage calculations (e.g., "85% attendance rate")</li>
+                    <li>• Highlight concerning metrics in red, positive metrics in green</li>
+                    <li>• Include a "Recommendations" section based on your findings</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Google Sheets Alternative -->
+        <div class="section">
+            <h3>🌐 Google Sheets Instructions</h3>
+            <p>Complete this project using Google Sheets with these adaptations:</p>
+            <ol class="step-list">
+                <li>
+                    <strong>Upload the template</strong> to Google Drive
+                    <div class="formula-example">Drive → Upload → Select CSV file → Open with Google Sheets</div>
+                </li>
+                <li>
+                    <strong>All formulas work identically</strong> - COUNT, COUNTA, and COUNTIF syntax is the same
+                </li>
+                <li>
+                    <strong>Use Google Sheets formatting</strong> - Format → Borders, colors, and fonts work similarly
+                </li>
+                <li>
+                    <strong>Share for portfolio</strong> - Share → "Anyone with the link can view"
+                </li>
+                <li>
+                    <strong>Download when finished</strong> - File → Download → Microsoft Excel (.xlsx)
+                </li>
+            </ol>
+            
+            <div class="formula-example">Google Sheets Tip: Use Format → Number → Percent to show participation rates as percentages!</div>
+        </div>
+    </div>
+
+    <script>
+        function downloadTemplate() {
+            // Create realistic LMS engagement data
+            const csvData = `Student Name,Student ID,Quiz 1,Quiz 2,Discussion,Attendance,Status,Final Grade
+Sarah Johnson,SJ2024001,85,92,Yes,Present,Active,A
+Michael Chen,MC2024002,78,,Partial,Absent,Active,B
+Emma Rodriguez,ER2024003,,89,No,Excused,Inactive,Incomplete
+David Kim,DK2024004,94,87,Yes,Present,Active,A
+Ashley Davis,AD2024005,88,91,Yes,Present,Active,B
+Ryan Thompson,RT2024006,76,82,Partial,Present,Active,C
+Jessica Lee,JL2024007,95,96,Yes,Present,Active,A
+Andrew Martinez,AM2024008,81,79,Yes,Absent,Active,B
+Lauren White,LW2024009,89,,No,Present,Inactive,C
+Kevin Brown,KB2024010,77,81,Partial,Present,Active,C
+Samantha Taylor,ST2024011,92,88,Yes,Present,Active,A
+Daniel Anderson,DA2024012,80,83,No,Absent,Active,C
+Rachel Thomas,RT2024013,86,91,Yes,Present,Active,B
+Christopher Moore,CM2024014,74,,Partial,Excused,Active,C
+Amanda Jackson,AJ2024015,90,92,Yes,Present,Active,A
+Matthew Harris,MH2024016,82,79,Yes,Present,Active,B
+Nicole Clark,NC2024017,87,84,Partial,Absent,Active,B
+Brandon Lewis,BL2024018,79,75,No,Present,Inactive,D
+Stephanie Walker,SW2024019,93,95,Yes,Present,Active,A
+Tyler Hall,TH2024020,78,81,Partial,Present,Active,C
+Melissa Allen,MA2024021,85,,Yes,Absent,Active,B
+Justin Young,JY2024022,88,90,Yes,Present,Active,B
+Kimberly King,KK2024023,91,89,Yes,Present,Active,A
+Alex Rodriguez,AR2024024,73,76,No,Excused,Inactive,D
+Hannah Wilson,HW2024025,84,87,Partial,Present,Active,B
+Nathan Cooper,NC2024026,79,,No,Absent,Withdrawn,F
+Olivia Parker,OP2024027,96,94,Yes,Present,Active,A
+Ethan Foster,EF2024028,82,85,Yes,Present,Active,B
+Grace Mitchell,GM2024029,87,83,Partial,Present,Active,B
+Connor Bell,CB2024030,75,78,No,Present,Inactive,Incomplete
+,,,,,,,
+Analytics Section:,,,,,,,
+Total Enrolled:,,,,,,,
+Quiz 1 Submissions:,,,,,,,
+Quiz 2 Submissions:,,,,,,,
+Active Participants:,,,,,,,
+Present Attendance:,,,,,,,
+Active Status:,,,,,,,
+High Quiz 1 Scores (>85):,,,,,,,
+A Grades:,,,,,,,
+Incomplete Students:,,,,,,,`;
+            
+            // Create downloadable file
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'LMS_Student_Engagement_Data.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            // Show success message
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Downloaded! Check your downloads folder';
+            btn.style.background = 'linear-gradient(45deg, #d4f2d2, #a8d8a6)';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = 'linear-gradient(45deg, #d4f2d2, #a8d8a6)';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
