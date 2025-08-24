@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Your Portfolio: Excel SUM Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Avenir', 'Avenir Next', system-ui, -apple-system, sans-serif;
+            background: #868784;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #34113f;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .portfolio-header {
+            background: linear-gradient(45deg, #beb7df, #ddd4f0);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #34113f;
+            color: #34113f;
+        }
+        
+        .portfolio-header h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            border-left: 5px solid #beb7df;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section h3 {
+            color: #34113f;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .download-btn {
+            background: linear-gradient(45deg, #d4f2d2, #a8d8a6);
+            color: #2d5016;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 242, 210, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 242, 210, 0.4);
+        }
+        
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+        
+        .step-list li {
+            counter-increment: step-counter;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #beb7df;
+            position: relative;
+        }
+        
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -15px;
+            top: 15px;
+            background: #34113f;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .formula-example {
+            background: #34113f;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            margin: 10px 0;
+            border-left: 4px solid #d4f2d2;
+        }
+        
+        .tip-box {
+            background: linear-gradient(45deg, #aba9bf, #c0bdd3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: white;
+            border-left: 4px solid #34113f;
+        }
+        
+        .tip-box h4 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .portfolio-criteria {
+            background: linear-gradient(45deg, #d4f2d2, #c8ecc6);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: #2d5016;
+            border-left: 4px solid #2d5016;
+        }
+        
+        .portfolio-criteria h4 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .portfolio-criteria ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .portfolio-criteria li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .portfolio-criteria li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2d5016;
+            font-weight: bold;
+        }
+        
+        .data-preview {
+            background: #f8f9fa;
+            border: 2px solid #aba9bf;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #aba9bf;
+        }
+        
+        .data-table th {
+            background: #34113f;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .data-table tr:hover {
+            background: #beb7df;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .step-list li {
+                padding-left: 35px;
+            }
+            
+            .data-preview {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📁 For Your Portfolio: Course Grade Analysis</h1>
+        
+        <div class="portfolio-header">
+            <h2>🎯 Project Overview</h2>
+            <p>Create a professional Excel spreadsheet that demonstrates your mastery of the SUM formula while analyzing real LMS course data. This project simulates the type of grade analysis that instructors perform regularly and showcases your ability to work with educational data, create meaningful calculations, and present findings clearly.</p>
+        </div>
+
+        <!-- Template Download Section -->
+        <div class="section">
+            <h3>📥 Step 1: Download Your Template</h3>
+            <p>Start with our pre-designed template containing realistic LMS course data from "Introduction to Digital Marketing":</p>
+            
+            <button class="download-btn" onclick="downloadTemplate()">
+                📊 Download Course Data Template
+            </button>
+            
+            <div class="tip-box">
+                <h4>💡 Template Contents</h4>
+                <p>The template includes:</p>
+                <ul>
+                    <li>• 25 student records with realistic names</li>
+                    <li>• Assignment scores: Quiz 1, Quiz 2, Midterm, Final, Project</li>
+                    <li>• Participation and attendance data</li>
+                    <li>• Course completion status</li>
+                    <li>• Clearly labeled sections for your SUM formulas</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Data Preview Section -->
+        <div class="section">
+            <h3>👀 Template Data Preview</h3>
+            <div class="data-preview">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Quiz 1</th>
+                            <th>Quiz 2</th>
+                            <th>Midterm</th>
+                            <th>Final</th>
+                            <th>Project</th>
+                            <th>Total Points</th>
+                            <th>Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sarah Johnson</td>
+                            <td>85</td>
+                            <td>92</td>
+                            <td>88</td>
+                            <td>91</td>
+                            <td>94</td>
+                            <td>[Your SUM formula]</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Michael Chen</td>
+                            <td>78</td>
+                            <td>84</td>
+                            <td>82</td>
+                            <td>87</td>
+                            <td>89</td>
+                            <td>[Your SUM formula]</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Emma Rodriguez</td>
+                            <td>95</td>
+                            <td>89</td>
+                            <td>93</td>
+                            <td>96</td>
+                            <td>92</td>
+                            <td>[Your SUM formula]</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="text-align: right; font-weight: bold;">Class Averages:</td>
+                            <td>[Your SUM formulas]</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Instructions Section -->
+        <div class="section">
+            <h3>📋 Step 2: Complete Your Analysis</h3>
+            <ol class="step-list">
+                <li>
+                    <strong>Open the template</strong> in Excel or Google Sheets
+                    <div class="formula-example">File → Open → Select downloaded course data template</div>
+                </li>
+                
+                <li>
+                    <strong>Calculate Total Points for Each Student</strong> using SUM formulas
+                    <div class="formula-example">=SUM(B2:F2)</div>
+                    <p>Apply this formula to each student's row to total all their assignment scores</p>
+                </li>
+                
+                <li>
+                    <strong>Calculate Assignment Totals</strong> for the entire class
+                    <div class="formula-example">=SUM(B2:B26)</div>
+                    <p>Create totals for each assignment column (Quiz 1, Quiz 2, Midterm, Final, Project)</p>
+                </li>
+                
+                <li>
+                    <strong>Create Class Statistics</strong> using SUM formulas
+                    <div class="formula-example">=SUM(G2:G26)</div>
+                    <p>Calculate total points earned by all students combined</p>
+                </li>
+                
+                <li>
+                    <strong>Add Grade Analysis Section</strong> with insights
+                    <p>Include 2-3 observations about class performance, completion rates, highest/lowest performing assignments</p>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Portfolio Requirements -->
+        <div class="section">
+            <h3>✅ Step 3: Portfolio Requirements</h3>
+            <div class="portfolio-criteria">
+                <h4>Your completed project must include:</h4>
+                <ul>
+                    <li>Total points calculated for each student using SUM formulas</li>
+                    <li>Assignment totals calculated for each column using SUM formulas</li>
+                    <li>Class-wide statistics using SUM formulas</li>
+                    <li>Clear, professional formatting with proper headers</li>
+                    <li>Written analysis (2-3 sentences) of the class performance data</li>
+                    <li>Your name and date on the spreadsheet</li>
+                    <li>File saved as "YourName_CourseGrade_Analysis.xlsx"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Submission Section -->
+        <div class="section">
+            <h3>📤 Step 4: Save for Your Portfolio</h3>
+            <ol class="step-list">
+                <li>
+                    <strong>Save your completed file</strong>
+                    <div class="formula-example">File → Save As → "YourName_CourseGrade_Analysis.xlsx"</div>
+                </li>
+                
+                <li>
+                    <strong>Take a screenshot</strong> of your completed spreadsheet showing all formulas and totals
+                </li>
+                
+                <li>
+                    <strong>Export as PDF</strong> for easy portfolio viewing
+                    <div class="formula-example">File → Export → Create PDF/XPS</div>
+                </li>
+                
+                <li>
+                    <strong>Document your learning</strong> - Write 2-3 sentences about what you learned about SUM formulas
+                </li>
+            </ol>
+            
+            <div class="tip-box">
+                <h4>🎨 Portfolio Presentation Tips</h4>
+                <ul>
+                    <li>• Use consistent formatting (fonts, colors, alignment)</li>
+                    <li>• Add borders and shading to make grade data easy to read</li>
+                    <li>• Include a title "Course Grade Analysis" and your name prominently</li>
+                    <li>• Consider highlighting top performers or concerning grades</li>
+                    <li>• Add completion percentage statistics</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Google Sheets Alternative -->
+        <div class="section">
+            <h3>🌐 Google Sheets Alternative</h3>
+            <p>Don't have Excel? No problem! You can complete this project in Google Sheets:</p>
+            <ol class="step-list">
+                <li>Upload the course data template to Google Drive</li>
+                <li>Open with Google Sheets (it will convert automatically)</li>
+                <li>Complete all the same steps - SUM formulas work identically</li>
+                <li>Share with "Anyone with the link can view" for portfolio inclusion</li>
+                <li>Download as Excel format when finished: File → Download → Microsoft Excel</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function downloadTemplate() {
+            // Create realistic LMS course data
+            const csvData = `Student Name,Quiz 1,Quiz 2,Midterm,Final,Project,Total Points,Completed
+Sarah Johnson,85,92,88,91,94,,Yes
+Michael Chen,78,84,82,87,89,,Yes
+Emma Rodriguez,95,89,93,96,92,,Yes
+James Wilson,72,76,79,83,81,,Yes
+Ashley Davis,88,94,91,89,95,,Yes
+David Kim,91,87,85,92,88,,Yes
+Maria Garcia,83,90,86,88,90,,Yes
+Ryan Thompson,76,82,80,85,78,,Yes
+Jessica Lee,94,96,92,95,97,,Yes
+Andrew Martinez,81,79,84,86,82,,Yes
+Lauren White,89,85,87,90,91,,Yes
+Kevin Brown,77,81,75,79,80,,Yes
+Samantha Taylor,92,88,90,93,89,,Yes
+Daniel Anderson,80,83,78,81,84,,No
+Rachel Thomas,86,91,89,87,93,,Yes
+Christopher Moore,74,77,81,76,79,,No
+Amanda Jackson,90,92,88,94,91,,Yes
+Matthew Harris,82,79,83,85,80,,Yes
+Nicole Clark,87,84,86,89,88,,Yes
+Brandon Lewis,79,75,77,82,78,,No
+Stephanie Walker,93,95,91,92,96,,Yes
+Tyler Hall,78,81,79,80,83,,Yes
+Melissa Allen,85,88,84,87,86,,Yes
+Justin Young,88,90,85,89,87,,Yes
+Kimberly King,91,89,93,95,92,,Yes
+,,,,,,
+Class Totals:,,,,,`;
+            
+            // Create downloadable file
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Course_Grade_Data_Template.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            // Show success message
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Downloaded! Check your downloads folder';
+            btn.style.background = 'linear-gradient(45deg, #d4f2d2, #a8d8a6)';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = 'linear-gradient(45deg, #d4f2d2, #a8d8a6)';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
