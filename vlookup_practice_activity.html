@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VLOOKUP Mastery for LMS Managers</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Avenir+Next:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Avenir Next', Arial, sans-serif;
+            background: linear-gradient(135deg, #d4f2d2 0%, #beb7df 50%, #aba9bf 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(52, 17, 63, 0.2);
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #34113f;
+        }
+        
+        .header h1 {
+            color: #34113f;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #868784;
+            font-size: 1.2em;
+            font-weight: 400;
+        }
+        
+        .scenario-card {
+            background: linear-gradient(135deg, #beb7df, #aba9bf);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #34113f;
+            box-shadow: 0 5px 15px rgba(52, 17, 63, 0.1);
+        }
+        
+        .scenario-title {
+            color: #34113f;
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .scenario-description {
+            color: #34113f;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .formula-box {
+            background: #34113f;
+            color: #d4f2d2;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            margin: 15px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+        
+        .formula-label {
+            background: #d4f2d2;
+            color: #34113f;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: 600;
+            position: absolute;
+            top: -10px;
+            left: 15px;
+        }
+        
+        .practice-section {
+            background: #d4f2d2;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .practice-title {
+            color: #34113f;
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .question {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #beb7df;
+        }
+        
+        .question-text {
+            color: #34113f;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #beb7df;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            background: #f8f8f8;
+            transition: border-color 0.3s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #34113f;
+            background: white;
+        }
+        
+        .hint {
+            color: #868784;
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .check-button {
+            background: linear-gradient(135deg, #34113f, #868784);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px 0;
+        }
+        
+        .check-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 17, 63, 0.3);
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: #d4f2d2;
+            color: #34113f;
+            border: 2px solid #34113f;
+        }
+        
+        .feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #c62828;
+        }
+        
+        .reference-guide {
+            background: rgba(171, 169, 191, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .reference-title {
+            color: #34113f;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .sample-data-section {
+            background: rgba(212, 242, 210, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .table-container {
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(52, 17, 63, 0.1);
+        }
+        
+        .table-title {
+            color: #34113f;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            text-align: center;
+            background: #beb7df;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .sample-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        
+        .sample-table th {
+            background: #34113f;
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #34113f;
+        }
+        
+        .sample-table td {
+            padding: 10px 8px;
+            border: 1px solid #beb7df;
+            text-align: center;
+        }
+        
+        .sample-table tr:first-child td {
+            background: #d4f2d2;
+            font-weight: 600;
+            color: #34113f;
+        }
+        
+        .sample-table tr:not(:first-child):nth-child(even) td {
+            background: #f8f9fa;
+        }
+        
+        .sample-table tr:hover td {
+            background: rgba(190, 183, 223, 0.2);
+        }
+        
+        .argument-list {
+            list-style: none;
+        }
+        
+        .argument-list li {
+            background: white;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 3px solid #34113f;
+        }
+        
+        .argument-name {
+            color: #34113f;
+            font-weight: 600;
+        }
+        
+        .argument-description {
+            color: #868784;
+            font-size: 0.95em;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .formula-box {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VLOOKUP Mastery for LMS Managers</h1>
+            <p>Master the art of data lookup in educational environments</p>
+        </div>
+        
+        <div class="reference-guide">
+            <div class="reference-title">VLOOKUP Quick Reference</div>
+            <div class="formula-box">
+                <div class="formula-label">Syntax</div>
+                =VLOOKUP(lookup_value, table_array, column_index, [range_lookup])
+            </div>
+            <ul class="argument-list">
+                <li>
+                    <span class="argument-name">lookup_value:</span>
+                    <div class="argument-description">What you're searching for (student ID, course code, etc.)</div>
+                </li>
+                <li>
+                    <span class="argument-name">table_array:</span>
+                    <div class="argument-description">The data range where Excel should search (A1:D100)</div>
+                </li>
+                <li>
+                    <span class="argument-name">column_index:</span>
+                    <div class="argument-description">Which column contains the information you want back (2 for column B, 3 for column C, etc.)</div>
+                </li>
+                <li>
+                    <span class="argument-name">range_lookup:</span>
+                    <div class="argument-description">Use FALSE for exact matches (recommended for educational data)</div>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="scenario-card">
+            <div class="scenario-title">Scenario 1: Student Information Lookup</div>
+            <div class="scenario-description">
+                You're managing a student database where column A contains Student IDs, column B has student names, 
+                column C has their majors, and column D has their email addresses. You need to quickly find student 
+                information when you only have their ID number.
+            </div>
+            <div class="formula-box">
+                <div class="formula-label">Example</div>
+                =VLOOKUP("STU-2024-001", A2:D100, 3, FALSE)
+            </div>
+        </div>
+        
+        <div class="scenario-card">
+            <div class="scenario-title">Scenario 2: Course Catalog Integration</div>
+            <div class="scenario-description">
+                Your course catalog has course codes in column A, course titles in column B, and instructor names 
+                in column C. You want to automatically populate course titles when faculty enter course codes.
+            </div>
+            <div class="formula-box">
+                <div class="formula-label">Example</div>
+                =VLOOKUP(B2, CourseList!A:C, 2, FALSE)
+            </div>
+        </div>
+        
+        <div class="sample-data-section">
+            <div class="practice-title">Sample Data Tables</div>
+            <p style="text-align: center; color: #868784; margin-bottom: 25px;">Use these sample tables to practice your VLOOKUP formulas</p>
+            
+            <div class="table-container">
+                <div class="table-title">Student Roster (Sheet1: A1:D10)</div>
+                <table class="sample-table">
+                    <thead>
+                        <tr>
+                            <th>A</th>
+                            <th>B</th>
+                            <th>C</th>
+                            <th>D</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Student ID</td>
+                            <td>Name</td>
+                            <td>Major</td>
+                            <td>GPA</td>
+                        </tr>
+                        <tr>
+                            <td>STU-2024-001</td>
+                            <td>Sarah Chen</td>
+                            <td>Computer Science</td>
+                            <td>3.85</td>
+                        </tr>
+                        <tr>
+                            <td>STU-2024-099</td>
+                            <td>Marcus Johnson</td>
+                            <td>Business</td>
+                            <td>3.42</td>
+                        </tr>
+                        <tr>
+                            <td>STU-2024-156</td>
+                            <td>Elena Rodriguez</td>
+                            <td>Psychology</td>
+                            <td>3.91</td>
+                        </tr>
+                        <tr>
+                            <td>STU-2024-203</td>
+                            <td>David Kim</td>
+                            <td>Engineering</td>
+                            <td>3.67</td>
+                        </tr>
+                        <tr>
+                            <td>STU-2024-287</td>
+                            <td>Ashley Miller</td>
+                            <td>Biology</td>
+                            <td>3.78</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-title">Course Catalog (Courses Sheet: A1:C6)</div>
+                <table class="sample-table">
+                    <thead>
+                        <tr>
+                            <th>A</th>
+                            <th>B</th>
+                            <th>C</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Course Code</td>
+                            <td>Course Title</td>
+                            <td>Credit Hours</td>
+                        </tr>
+                        <tr>
+                            <td>CS-101</td>
+                            <td>Intro to Programming</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>BUS-201</td>
+                            <td>Marketing Fundamentals</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>PSY-150</td>
+                            <td>General Psychology</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>ENG-210</td>
+                            <td>Structural Engineering</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>BIO-105</td>
+                            <td>Cell Biology</td>
+                            <td>3</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="practice-section">
+            <div class="practice-title">Practice Exercises</div>
+            
+            <div class="question">
+                <div class="question-text">
+                    1. Using the Student Roster table above, write a VLOOKUP formula to find the GPA of student "STU-2024-099". 
+                    (Assume the table is in range A1:D500)
+                </div>
+                <input type="text" class="input-field" id="answer1" placeholder="Enter your VLOOKUP formula here...">
+                <div class="hint">Hint: GPA is in the 4th column of your table array</div>
+                <button class="check-button" onclick="checkAnswer(1)">Check Answer</button>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+            
+            <div class="question">
+                <div class="question-text">
+                    2. Using the Course Catalog table above, write a VLOOKUP formula to find the credit hours for course code "PSY-150". 
+                    (The course data is on a sheet called "Courses")
+                </div>
+                <input type="text" class="input-field" id="answer2" placeholder="Enter your VLOOKUP formula here...">
+                <div class="hint">Hint: Reference another sheet with SheetName!Range format</div>
+                <button class="check-button" onclick="checkAnswer(2)">Check Answer</button>
+                <div class="feedback" id="feedback2"></div>
+            </div>
+            
+            <div class="question">
+                <div class="question-text">
+                    3. In your gradebook, you want to look up a student's final grade. Student IDs are in column A, 
+                    names in B, midterm grades in C, final exam scores in D, and final grades in E. 
+                    Write a VLOOKUP to find the final grade for the student ID in cell A10 from the range A2:E200.
+                </div>
+                <input type="text" class="input-field" id="answer3" placeholder="Enter your VLOOKUP formula here...">
+                <div class="hint">Hint: Final grades are in the 5th column, and you're looking up the value in A10</div>
+                <button class="check-button" onclick="checkAnswer(3)">Check Answer</button>
+                <div class="feedback" id="feedback3"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const correctAnswers = {
+            1: '=vlookup("stu-2024-099",a1:d500,4,false)',
+            2: '=vlookup("psy-150",courses!a1:c6,3,false)',
+            3: '=vlookup(a10,a2:e200,5,false)'
+        };
+
+        function normalizeFormula(formula) {
+            return formula.toLowerCase().replace(/\s+/g, '').replace(/"/g, '"').replace(/"/g, '"');
+        }
+
+        function checkAnswer(questionNumber) {
+            const userAnswer = document.getElementById(`answer${questionNumber}`).value;
+            const feedback = document.getElementById(`feedback${questionNumber}`);
+            const normalizedUser = normalizeFormula(userAnswer);
+            const normalizedCorrect = normalizeFormula(correctAnswers[questionNumber]);
+            
+            feedback.style.display = 'block';
+            
+            if (normalizedUser === normalizedCorrect) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✅ Excellent! Your VLOOKUP formula is correct!';
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `❌ Not quite right. The correct answer is:<br><code>${correctAnswers[questionNumber]}</code><br><br>Review the syntax and try again!`;
+            }
+        }
+
+        // Add enter key functionality
+        document.querySelectorAll('.input-field').forEach((input, index) => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer(index + 1);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
