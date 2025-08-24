@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COUNT Formula Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Avenir', 'Avenir Next', system-ui, -apple-system, sans-serif;
+            background: #868784;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #34113f;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .exercise-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            border-left: 5px solid #beb7df;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .exercise-section h2 {
+            color: #34113f;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .spreadsheet {
+            display: grid;
+            grid-template-columns: 50px repeat(7, 120px);
+            gap: 2px;
+            margin: 20px 0;
+            background: #aba9bf;
+            padding: 10px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        
+        .cell {
+            background: white;
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: center;
+            font-size: 14px;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .cell:hover {
+            box-shadow: 0 2px 8px rgba(190, 183, 223, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #34113f, #beb7df);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .row-header {
+            background: #aba9bf;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .empty-cell {
+            background: #f8f9fa;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .formula-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #aba9bf;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            transition: border-color 0.3s ease;
+        }
+        
+        .formula-input:focus {
+            outline: none;
+            border-color: #beb7df;
+            box-shadow: 0 0 0 3px rgba(190, 183, 223, 0.2);
+        }
+        
+        .check-btn {
+            background: linear-gradient(45deg, #d4f2d2, #a8d8a6);
+            color: #2d5016;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 242, 210, 0.3);
+        }
+        
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 242, 210, 0.4);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(45deg, #aba9bf, #868784);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(134, 135, 132, 0.3);
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(134, 135, 132, 0.4);
+        }
+        
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback.show {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+        
+        .success {
+            background: linear-gradient(45deg, #d4f2d2, #c8ecc6);
+            color: #2d5016;
+            border: 2px solid #d4f2d2;
+        }
+        
+        .error {
+            background: linear-gradient(45deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .question {
+            background: linear-gradient(45deg, #beb7df, #ddd4f0);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #34113f;
+            font-weight: 500;
+            color: #34113f;
+        }
+        
+        .hint {
+            background: linear-gradient(45deg, #aba9bf, #c0bdd3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-style: italic;
+            border-left: 4px solid #34113f;
+            color: white;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4f2d2, #beb7df);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 5px;
+        }
+        
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #34113f;
+            margin-top: 10px;
+        }
+        
+        .formula-type {
+            display: inline-block;
+            background: #34113f;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .spreadsheet {
+                grid-template-columns: 40px repeat(7, 80px);
+                font-size: 12px;
+            }
+            
+            .cell {
+                padding: 5px;
+                min-height: 30px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 COUNT Formula Practice</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="score" id="scoreDisplay">Score: 0/6</div>
+        
+        <!-- Main Data Table -->
+        <div class="exercise-section">
+            <h2>Course Participation Data</h2>
+            <div class="spreadsheet" id="mainData">
+                <div class="cell header"></div>
+                <div class="cell header">A</div>
+                <div class="cell header">B</div>
+                <div class="cell header">C</div>
+                <div class="cell header">D</div>
+                <div class="cell header">E</div>
+                <div class="cell header">F</div>
+                <div class="cell header">G</div>
+                
+                <div class="cell row-header">1</div>
+                <div class="cell">Student</div>
+                <div class="cell">Quiz 1</div>
+                <div class="cell">Quiz 2</div>
+                <div class="cell">Assignment</div>
+                <div class="cell">Status</div>
+                <div class="cell">Participation</div>
+                <div class="cell">Comments</div>
+                
+                <div class="cell row-header">2</div>
+                <div class="cell">Alice</div>
+                <div class="cell">85</div>
+                <div class="cell">92</div>
+                <div class="cell">88</div>
+                <div class="cell">Active</div>
+                <div class="cell">Yes</div>
+                <div class="cell">Great work</div>
+                
+                <div class="cell row-header">3</div>
+                <div class="cell">Bob</div>
+                <div class="cell">78</div>
+                <div class="cell empty-cell">-</div>
+                <div class="cell">91</div>
+                <div class="cell">Active</div>
+                <div class="cell">Yes</div>
+                <div class="cell">Missed quiz</div>
+                
+                <div class="cell row-header">4</div>
+                <div class="cell">Carol</div>
+                <div class="cell">95</div>
+                <div class="cell">89</div>
+                <div class="cell empty-cell">-</div>
+                <div class="cell">Inactive</div>
+                <div class="cell">No</div>
+                <div class="cell empty-cell">-</div>
+                
+                <div class="cell row-header">5</div>
+                <div class="cell">David</div>
+                <div class="cell">82</div>
+                <div class="cell">87</div>
+                <div class="cell">94</div>
+                <div class="cell">Active</div>
+                <div class="cell">Yes</div>
+                <div class="cell">Excellent</div>
+                
+                <div class="cell row-header">6</div>
+                <div class="cell">Eva</div>
+                <div class="cell empty-cell">-</div>
+                <div class="cell">94</div>
+                <div class="cell">96</div>
+                <div class="cell">Active</div>
+                <div class="cell">Yes</div>
+                <div class="cell">Late start</div>
+                
+                <div class="cell row-header">7</div>
+                <div class="cell">Frank</div>
+                <div class="cell">90</div>
+                <div class="cell">88</div>
+                <div class="cell">85</div>
+                <div class="cell">Active</div>
+                <div class="cell">No</div>
+                <div class="cell">Quiet student</div>
+            </div>
+        </div>
+
+        <!-- Exercise 1: COUNT -->
+        <div class="exercise-section">
+            <span class="formula-type">COUNT</span>
+            <h2>Exercise 1: Count Numeric Quiz 1 Scores</h2>
+            <div class="question">
+                🔢 How many students have submitted Quiz 1 (have numeric scores in column B)? Use COUNT to count only cells with numbers.
+            </div>
+            
+            <input type="text" class="formula-input" id="formula1" placeholder="Enter your COUNT formula here">
+            <div class="hint">💡 Hint: Use =COUNT(B2:B7) to count only numeric values</div>
+            <button class="check-btn" onclick="checkAnswer(1, 5, '=COUNT(B2:B7)')">Check Answer</button>
+            <button class="reset-btn" onclick="resetExercise(1)">Reset</button>
+            <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Exercise 2: COUNTA -->
+        <div class="exercise-section">
+            <span class="formula-type">COUNTA</span>
+            <h2>Exercise 2: Count All Students</h2>
+            <div class="question">
+                👥 How many total students are enrolled (have names in column A)? Use COUNTA to count any data type.
+            </div>
+            
+            <input type="text" class="formula-input" id="formula2" placeholder="Enter your COUNTA formula here">
+            <div class="hint">💡 Hint: Use =COUNTA(A2:A7) to count all non-empty cells</div>
+            <button class="check-btn" onclick="checkAnswer(2, 6, '=COUNTA(A2:A7)')">Check Answer</button>
+            <button class="reset-btn" onclick="resetExercise(2)">Reset</button>
+            <div class="feedback" id="feedback2"></div>
+        </div>
+
+        <!-- Exercise 3: COUNT vs COUNTA -->
+        <div class="exercise-section">
+            <span class="formula-type">COUNT vs COUNTA</span>
+            <h2>Exercise 3: Count Assignment Submissions</h2>
+            <div class="question">
+                📝 How many students submitted their assignment (have any data in column D)? Notice some cells are empty (-).
+            </div>
+            
+            <input type="text" class="formula-input" id="formula3" placeholder="Should you use COUNT or COUNTA?">
+            <div class="hint">💡 Hint: The "-" represents empty/missing data. Use =COUNT(D2:D7) for numeric grades only</div>
+            <button class="check-btn" onclick="checkAnswer(3, 4, '=COUNT(D2:D7)')">Check Answer</button>
+            <button class="reset-btn" onclick="resetExercise(3)">Reset</button>
+            <div class="feedback" id="feedback3"></div>
+        </div>
+
+        <!-- Exercise 4: COUNTIF Active -->
+        <div class="exercise-section">
+            <span class="formula-type">COUNTIF</span>
+            <h2>Exercise 4: Count Active Students</h2>
+            <div class="question">
+                ✅ How many students have "Active" status? Use COUNTIF with criteria.
+            </div>
+            
+            <input type="text" class="formula-input" id="formula4" placeholder="Enter your COUNTIF formula here">
+            <div class="hint">💡 Hint: Use =COUNTIF(E2:E7,"Active") to count cells matching "Active"</div>
+            <button class="check-btn" onclick="checkAnswer(4, 5, '=COUNTIF(E2:E7,\"Active\")')">Check Answer</button>
+            <button class="reset-btn" onclick="resetExercise(4)">Reset</button>
+            <div class="feedback" id="feedback4"></div>
+        </div>
+
+        <!-- Exercise 5: COUNTIF High Scores -->
+        <div class="exercise-section">
+            <span class="formula-type">COUNTIF</span>
+            <h2>Exercise 5: Count High Quiz 2 Scores</h2>
+            <div class="question">
+                🏆 How many students scored above 90 on Quiz 2? Use COUNTIF with a numeric condition.
+            </div>
+            
+            <input type="text" class="formula-input" id="formula5" placeholder="Enter formula to count scores > 90">
+            <div class="hint">💡 Hint: Use =COUNTIF(C2:C7,">90") to count scores greater than 90</div>
+            <button class="check-btn" onclick="checkAnswer(5, 2, '=COUNTIF(C2:C7,\">90\")')">Check Answer</button>
+            <button class="reset-btn" onclick="resetExercise(5)">Reset</button>
+            <div class="feedback" id="feedback5"></div>
+        </div>
+
+        <!-- Exercise 6: COUNTIF Non-participants -->
+        <div class="exercise-section">
+            <span class="formula-type">COUNTIF</span>
+            <h2>Exercise 6: Count Non-Participants</h2>
+            <div class="question">
+                ❌ How many students are not participating in class discussions (have "No" in the Participation column)?
+            </div>
+            
+            <input type="text" class="formula-input" id="formula6" placeholder="Enter formula to count 'No' responses">
+            <div class="hint">💡 Hint: Use =COUNTIF(F2:F7,"No") to count "No" responses</div>
+            <button class="check-btn" onclick="checkAnswer(6, 2, '=COUNTIF(F2:F7,\"No\")')">Check Answer</button>
+            <button class="reset-btn" onclick="resetExercise(6)">Reset</button>
+            <div class="feedback" id="feedback6"></div>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let totalExercises = 6;
+        let completed = new Set();
+
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const percentage = (score / totalExercises) * 100;
+            
+            progressFill.style.width = percentage + '%';
+            scoreDisplay.textContent = `Score: ${score}/${totalExercises}`;
+            
+            if (score === totalExercises) {
+                scoreDisplay.innerHTML += ' 🎉 COUNT Master!';
+                scoreDisplay.style.color = '#2d5016';
+            }
+        }
+
+        function normalizeFormula(formula) {
+            return formula.toUpperCase()
+                         .replace(/\s/g, '')
+                         .replace(/"/g, '"')
+                         .replace(/"/g, '"')
+                         .replace(/'/g, '"');
+        }
+
+        function checkAnswer(exerciseNum, expectedResult, expectedFormula) {
+            const userFormula = document.getElementById(`formula${exerciseNum}`).value.trim();
+            const feedback = document.getElementById(`feedback${exerciseNum}`);
+            
+            if (!userFormula) {
+                showFeedback(feedback, 'Please enter a formula!', 'error');
+                return;
+            }
+
+            const normalizedUser = normalizeFormula(userFormula);
+            const normalizedExpected = normalizeFormula(expectedFormula);
+            
+            // Check if the formula structure is correct
+            if (normalizedUser === normalizedExpected || 
+                normalizedUser === normalizedExpected.replace(/,/g, ', ') ||
+                normalizedUser === normalizedExpected.replace(/\\/g, '')) {
+                
+                if (!completed.has(exerciseNum)) {
+                    score++;
+                    completed.add(exerciseNum);
+                    updateProgress();
+                }
+                
+                showFeedback(feedback, 
+                    `✅ Correct! The result is ${expectedResult}. Great job with the COUNT formula!`, 
+                    'success');
+            } else {
+                // Check for alternative correct answers
+                const alternatives = getAlternatives(exerciseNum);
+                let isCorrect = false;
+                
+                for (let alt of alternatives) {
+                    if (normalizedUser === normalizeFormula(alt)) {
+                        isCorrect = true;
+                        break;
+                    }
+                }
+                
+                if (isCorrect) {
+                    if (!completed.has(exerciseNum)) {
+                        score++;
+                        completed.add(exerciseNum);
+                        updateProgress();
+                    }
+                    
+                    showFeedback(feedback, 
+                        `✅ Correct! The result is ${expectedResult}. Great job!`, 
+                        'success');
+                } else {
+                    showFeedback(feedback, 
+                        `❌ Not quite right. The expected formula is: ${expectedFormula}`, 
+                        'error');
+                }
+            }
+        }
+
+        function getAlternatives(exerciseNum) {
+            const alternatives = {
+                4: ['=COUNTIF(E2:E7,"Active")', '=COUNTIF(E2:E7,Active)'],
+                5: ['=COUNTIF(C2:C7,">90")', '=COUNTIF(C2:C7,>90)'],
+                6: ['=COUNTIF(F2:F7,"No")', '=COUNTIF(F2:F7,No)']
+            };
+            return alternatives[exerciseNum] || [];
+        }
+
+        function showFeedback(element, message, type) {
+            element.textContent = message;
+            element.className = `feedback ${type} show`;
+            
+            setTimeout(() => {
+                element.classList.remove('show');
+            }, 4000);
+        }
+
+        function resetExercise(exerciseNum) {
+            document.getElementById(`formula${exerciseNum}`).value = '';
+            const feedback = document.getElementById(`feedback${exerciseNum}`);
+            feedback.classList.remove('show');
+        }
+
+        // Initialize progress bar
+        updateProgress();
+    </script>
+</body>
+</html>
