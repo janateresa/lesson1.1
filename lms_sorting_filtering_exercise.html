@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS Data Sorting and Filtering Exercise</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Avenir', 'Avenir Next', sans-serif;
+            background: linear-gradient(135deg, #d4f2d2 0%, #beb7df 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(52, 17, 63, 0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #34113f 0%, #aba9bf 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .exercise-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #34113f;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: #868784;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-family: 'Avenir', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-right: 1px solid white;
+        }
+
+        .tab-button:last-child {
+            border-right: none;
+        }
+
+        .tab-button.active {
+            background: #34113f;
+            transform: translateY(-2px);
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #aba9bf;
+        }
+
+        .exercise-content {
+            padding: 30px;
+        }
+
+        .exercise-section {
+            display: none;
+        }
+
+        .exercise-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .controls {
+            background: #d4f2d2;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 2px solid #beb7df;
+        }
+
+        .controls h3 {
+            color: #34113f;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34113f;
+            font-weight: 600;
+        }
+
+        select, button {
+            font-family: 'Avenir', sans-serif;
+            padding: 10px 15px;
+            border: 2px solid #aba9bf;
+            border-radius: 8px;
+            background: white;
+            font-size: 1rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: #34113f;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #34113f;
+        }
+
+        button:hover {
+            background: #aba9bf;
+            border-color: #aba9bf;
+            transform: translateY(-1px);
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #beb7df;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #34113f;
+            color: white;
+            padding: 15px 12px;
+            font-weight: 600;
+            text-align: left;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+
+        th:hover {
+            background: #aba9bf;
+        }
+
+        th.sortable::after {
+            content: ' ↕';
+            opacity: 0.5;
+            font-size: 0.8rem;
+        }
+
+        th.sort-asc::after {
+            content: ' ↑';
+            opacity: 1;
+            color: #d4f2d2;
+        }
+
+        th.sort-desc::after {
+            content: ' ↓';
+            opacity: 1;
+            color: #d4f2d2;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #beb7df;
+            color: #34113f;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4f2d2;
+            color: #34113f;
+        }
+
+        .status-inactive {
+            background: #868784;
+            color: white;
+        }
+
+        .status-pending {
+            background: #beb7df;
+            color: #34113f;
+        }
+
+        .filter-summary {
+            background: #beb7df;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            color: #34113f;
+        }
+
+        .filter-summary strong {
+            font-weight: 600;
+        }
+
+        .clear-filters {
+            background: #868784 !important;
+            border-color: #868784 !important;
+        }
+
+        .clear-filters:hover {
+            background: #aba9bf !important;
+        }
+
+        .instruction {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #34113f;
+        }
+
+        .instruction h4 {
+            color: #34113f;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .instruction p {
+            color: #868784;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .exercise-tabs {
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                border-right: none;
+                border-bottom: 1px solid white;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Interactive Data Management Exercise</h1>
+            <p>Practice sorting and filtering student enrollment data</p>
+        </div>
+        
+        <div class="exercise-tabs">
+            <button class="tab-button active" onclick="showExercise(1)">Exercise 1: Basic Sorting</button>
+            <button class="tab-button" onclick="showExercise(2)">Exercise 2: Multi-Level Sorting</button>
+            <button class="tab-button" onclick="showExercise(3)">Exercise 3: Advanced Filtering</button>
+        </div>
+
+        <div class="exercise-content">
+            <!-- Exercise 1: Basic Sorting -->
+            <div id="exercise1" class="exercise-section active">
+                <div class="instruction">
+                    <h4>Task: Sort the student database by different criteria</h4>
+                    <p>Click on any column header to sort the data. Try sorting by Last Name, Department, Year Level, or Enrollment Date to see how the data reorganizes.</p>
+                </div>
+                
+                <div class="controls">
+                    <h3>Quick Sort Options</h3>
+                    <button onclick="sortData('lastName', 'asc')">Sort by Last Name A-Z</button>
+                    <button onclick="sortData('department', 'asc')">Sort by Department</button>
+                    <button onclick="sortData('yearLevel', 'asc')">Sort by Year Level</button>
+                    <button onclick="sortData('enrollDate', 'desc')">Sort by Recent Enrollment</button>
+                </div>
+            </div>
+
+            <!-- Exercise 2: Multi-Level Sorting -->
+            <div id="exercise2" class="exercise-section">
+                <div class="instruction">
+                    <h4>Task: Apply multiple sorting criteria</h4>
+                    <p>Use the controls below to sort by primary and secondary criteria. For example, sort by Department first, then by Year Level within each department.</p>
+                </div>
+                
+                <div class="controls">
+                    <h3>Multi-Level Sorting</h3>
+                    <div class="control-group">
+                        <label>Primary Sort:</label>
+                        <select id="primarySort">
+                            <option value="">Select primary sort</option>
+                            <option value="department">Department</option>
+                            <option value="yearLevel">Year Level</option>
+                            <option value="lastName">Last Name</option>
+                            <option value="enrollDate">Enrollment Date</option>
+                        </select>
+                        <select id="primaryOrder">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Secondary Sort:</label>
+                        <select id="secondarySort">
+                            <option value="">Select secondary sort</option>
+                            <option value="department">Department</option>
+                            <option value="yearLevel">Year Level</option>
+                            <option value="lastName">Last Name</option>
+                            <option value="enrollDate">Enrollment Date</option>
+                        </select>
+                        <select id="secondaryOrder">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                    </div>
+                    <button onclick="applyMultiSort()">Apply Multi-Level Sort</button>
+                </div>
+            </div>
+
+            <!-- Exercise 3: Advanced Filtering -->
+            <div id="exercise3" class="exercise-section">
+                <div class="instruction">
+                    <h4>Task: Find specific student records using filters</h4>
+                    <p>Use the filtering options below to narrow down the student list. Try finding all Junior-level students in Computer Science with Active status.</p>
+                </div>
+                
+                <div class="controls">
+                    <h3>Filter Options</h3>
+                    <div class="control-group">
+                        <label>Department:</label>
+                        <select id="filterDepartment">
+                            <option value="">All Departments</option>
+                            <option value="Biology">Biology</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Psychology">Psychology</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Year Level:</label>
+                        <select id="filterYear">
+                            <option value="">All Years</option>
+                            <option value="Freshman">Freshman</option>
+                            <option value="Sophomore">Sophomore</option>
+                            <option value="Junior">Junior</option>
+                            <option value="Senior">Senior</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Status:</label>
+                        <select id="filterStatus">
+                            <option value="">All Statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+                    <button onclick="applyFilters()">Apply Filters</button>
+                    <button class="clear-filters" onclick="clearFilters()">Clear All Filters</button>
+                </div>
+                
+                <div class="filter-summary" id="filterSummary" style="display: none;">
+                    <strong>Active Filters:</strong> <span id="filterText"></span>
+                </div>
+            </div>
+
+            <div class="data-table">
+                <table id="studentTable">
+                    <thead>
+                        <tr>
+                            <th class="sortable" onclick="sortData('studentId', 'toggle')">Student ID</th>
+                            <th class="sortable" onclick="sortData('lastName', 'toggle')">Last Name</th>
+                            <th class="sortable" onclick="sortData('firstName', 'toggle')">First Name</th>
+                            <th class="sortable" onclick="sortData('department', 'toggle')">Department</th>
+                            <th class="sortable" onclick="sortData('yearLevel', 'toggle')">Year Level</th>
+                            <th class="sortable" onclick="sortData('status', 'toggle')">Status</th>
+                            <th class="sortable" onclick="sortData('enrollDate', 'toggle')">Enrollment Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample student data
+        const studentData = [
+            {studentId: 'STU001', firstName: 'Emma', lastName: 'Johnson', department: 'Computer Science', yearLevel: 'Junior', status: 'Active', enrollDate: '2024-08-15'},
+            {studentId: 'STU002', firstName: 'Michael', lastName: 'Chen', department: 'Engineering', yearLevel: 'Senior', status: 'Active', enrollDate: '2024-01-12'},
+            {studentId: 'STU003', firstName: 'Sarah', lastName: 'Williams', department: 'Biology', yearLevel: 'Sophomore', status: 'Pending', enrollDate: '2024-08-20'},
+            {studentId: 'STU004', firstName: 'James', lastName: 'Brown', department: 'Mathematics', yearLevel: 'Freshman', status: 'Active', enrollDate: '2024-08-25'},
+            {studentId: 'STU005', firstName: 'Lisa', lastName: 'Davis', department: 'Psychology', yearLevel: 'Junior', status: 'Inactive', enrollDate: '2024-02-10'},
+            {studentId: 'STU006', firstName: 'David', lastName: 'Miller', department: 'Computer Science', yearLevel: 'Senior', status: 'Active', enrollDate: '2024-01-15'},
+            {studentId: 'STU007', firstName: 'Maria', lastName: 'Garcia', department: 'Biology', yearLevel: 'Junior', status: 'Active', enrollDate: '2024-08-18'},
+            {studentId: 'STU008', firstName: 'Kevin', lastName: 'Wilson', department: 'Engineering', yearLevel: 'Sophomore', status: 'Pending', enrollDate: '2024-08-22'},
+            {studentId: 'STU009', firstName: 'Ashley', lastName: 'Taylor', department: 'Mathematics', yearLevel: 'Senior', status: 'Active', enrollDate: '2024-01-20'},
+            {studentId: 'STU010', firstName: 'Ryan', lastName: 'Anderson', department: 'Computer Science', yearLevel: 'Junior', status: 'Active', enrollDate: '2024-08-16'},
+            {studentId: 'STU011', firstName: 'Jessica', lastName: 'Thomas', department: 'Psychology', yearLevel: 'Freshman', status: 'Active', enrollDate: '2024-08-28'},
+            {studentId: 'STU012', firstName: 'Brandon', lastName: 'Jackson', department: 'Engineering', yearLevel: 'Junior', status: 'Inactive', enrollDate: '2024-03-05'},
+            {studentId: 'STU013', firstName: 'Amanda', lastName: 'White', department: 'Biology', yearLevel: 'Senior', status: 'Active', enrollDate: '2024-01-18'},
+            {studentId: 'STU014', firstName: 'Christopher', lastName: 'Harris', department: 'Mathematics', yearLevel: 'Sophomore', status: 'Pending', enrollDate: '2024-08-24'},
+            {studentId: 'STU015', firstName: 'Nicole', lastName: 'Martin', department: 'Computer Science', yearLevel: 'Freshman', status: 'Active', enrollDate: '2024-08-30'}
+        ];
+
+        let currentData = [...studentData];
+        let currentSort = null;
+
+        function showExercise(exerciseNum) {
+            // Hide all exercises
+            document.querySelectorAll('.exercise-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected exercise
+            document.getElementById('exercise' + exerciseNum).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Reset filters and data when switching exercises
+            clearFilters();
+        }
+
+        function sortData(column, direction) {
+            // Clear previous sort indicators
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            if (direction === 'toggle') {
+                if (currentSort && currentSort.column === column) {
+                    direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    direction = 'asc';
+                }
+            }
+            
+            currentSort = { column, direction };
+            
+            // Add sort indicator to current column
+            const headerCell = document.querySelector(`th[onclick*="${column}"]`);
+            if (headerCell) {
+                headerCell.classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
+            }
+            
+            currentData.sort((a, b) => {
+                let valueA = a[column];
+                let valueB = b[column];
+                
+                // Handle different data types
+                if (column === 'enrollDate') {
+                    valueA = new Date(valueA);
+                    valueB = new Date(valueB);
+                } else if (typeof valueA === 'string') {
+                    valueA = valueA.toLowerCase();
+                    valueB = valueB.toLowerCase();
+                }
+                
+                if (valueA < valueB) return direction === 'asc' ? -1 : 1;
+                if (valueA > valueB) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+            
+            renderTable();
+        }
+
+        function applyMultiSort() {
+            const primary = document.getElementById('primarySort').value;
+            const primaryOrder = document.getElementById('primaryOrder').value;
+            const secondary = document.getElementById('secondarySort').value;
+            const secondaryOrder = document.getElementById('secondaryOrder').value;
+            
+            if (!primary) return;
+            
+            currentData.sort((a, b) => {
+                // Primary sort
+                let valueA = a[primary];
+                let valueB = b[primary];
+                
+                if (primary === 'enrollDate') {
+                    valueA = new Date(valueA);
+                    valueB = new Date(valueB);
+                } else if (typeof valueA === 'string') {
+                    valueA = valueA.toLowerCase();
+                    valueB = valueB.toLowerCase();
+                }
+                
+                let primaryResult = 0;
+                if (valueA < valueB) primaryResult = primaryOrder === 'asc' ? -1 : 1;
+                else if (valueA > valueB) primaryResult = primaryOrder === 'asc' ? 1 : -1;
+                
+                // If primary sort values are equal, use secondary sort
+                if (primaryResult === 0 && secondary) {
+                    let secValueA = a[secondary];
+                    let secValueB = b[secondary];
+                    
+                    if (secondary === 'enrollDate') {
+                        secValueA = new Date(secValueA);
+                        secValueB = new Date(secValueB);
+                    } else if (typeof secValueA === 'string') {
+                        secValueA = secValueA.toLowerCase();
+                        secValueB = secValueB.toLowerCase();
+                    }
+                    
+                    if (secValueA < secValueB) return secondaryOrder === 'asc' ? -1 : 1;
+                    if (secValueA > secValueB) return secondaryOrder === 'asc' ? 1 : -1;
+                }
+                
+                return primaryResult;
+            });
+            
+            renderTable();
+        }
+
+        function applyFilters() {
+            const departmentFilter = document.getElementById('filterDepartment').value;
+            const yearFilter = document.getElementById('filterYear').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            
+            currentData = studentData.filter(student => {
+                return (!departmentFilter || student.department === departmentFilter) &&
+                       (!yearFilter || student.yearLevel === yearFilter) &&
+                       (!statusFilter || student.status === statusFilter);
+            });
+            
+            updateFilterSummary();
+            renderTable();
+        }
+
+        function clearFilters() {
+            document.getElementById('filterDepartment').value = '';
+            document.getElementById('filterYear').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('primarySort').value = '';
+            document.getElementById('secondarySort').value = '';
+            
+            currentData = [...studentData];
+            updateFilterSummary();
+            renderTable();
+        }
+
+        function updateFilterSummary() {
+            const filters = [];
+            const dept = document.getElementById('filterDepartment').value;
+            const year = document.getElementById('filterYear').value;
+            const status = document.getElementById('filterStatus').value;
+            
+            if (dept) filters.push(`Department: ${dept}`);
+            if (year) filters.push(`Year: ${year}`);
+            if (status) filters.push(`Status: ${status}`);
+            
+            const summary = document.getElementById('filterSummary');
+            const text = document.getElementById('filterText');
+            
+            if (filters.length > 0) {
+                text.textContent = filters.join(', ');
+                summary.style.display = 'block';
+            } else {
+                summary.style.display = 'none';
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+            
+            currentData.forEach(student => {
+                const row = document.createElement('tr');
+                const statusClass = `status-${student.status.toLowerCase()}`;
+                
+                row.innerHTML = `
+                    <td>${student.studentId}</td>
+                    <td>${student.lastName}</td>
+                    <td>${student.firstName}</td>
+                    <td>${student.department}</td>
+                    <td>${student.yearLevel}</td>
+                    <td><span class="status-badge ${statusClass}">${student.status}</span></td>
+                    <td>${new Date(student.enrollDate).toLocaleDateString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Initialize the table on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable();
+        });
+    </script>
+</body>
+</html>
