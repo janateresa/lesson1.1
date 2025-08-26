@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS Data Management Portfolio Activity</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Avenir', 'Avenir Next', sans-serif;
+            background: linear-gradient(135deg, #d4f2d2 0%, #beb7df 100%);
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(52, 17, 63, 0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #34113f 0%, #aba9bf 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .download-section {
+            background: #d4f2d2;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 2px solid #beb7df;
+            text-align: center;
+        }
+
+        .download-section h2 {
+            color: #34113f;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .download-section p {
+            color: #34113f;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .download-button {
+            background: #34113f;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Avenir', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .download-button:hover {
+            background: #aba9bf;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 17, 63, 0.3);
+        }
+
+        .download-button:active {
+            transform: translateY(0);
+        }
+
+        .instructions-section {
+            margin-bottom: 30px;
+        }
+
+        .instructions-section h2 {
+            color: #34113f;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #beb7df;
+            padding-bottom: 10px;
+        }
+
+        .step-card {
+            background: #f8f9fa;
+            border-left: 5px solid #34113f;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .step-card h3 {
+            color: #34113f;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+        }
+
+        .step-card p {
+            color: #868784;
+            margin-bottom: 10px;
+        }
+
+        .step-card ul {
+            color: #868784;
+            padding-left: 20px;
+        }
+
+        .step-card ul li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: #beb7df;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #aba9bf;
+        }
+
+        .highlight-box h3 {
+            color: #34113f;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .highlight-box p {
+            color: #34113f;
+            margin-bottom: 10px;
+        }
+
+        .highlight-box ul {
+            color: #34113f;
+            padding-left: 20px;
+        }
+
+        .highlight-box ul li {
+            margin-bottom: 6px;
+        }
+
+        .portfolio-requirements {
+            background: linear-gradient(135deg, #aba9bf 0%, #beb7df 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .portfolio-requirements h2 {
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+        }
+
+        .portfolio-requirements .requirement-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #d4f2d2;
+        }
+
+        .portfolio-requirements .requirement-item h4 {
+            margin-bottom: 8px;
+            color: #d4f2d2;
+        }
+
+        .portfolio-requirements .requirement-item p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .tips-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border: 2px dashed #aba9bf;
+        }
+
+        .tips-section h3 {
+            color: #34113f;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .tips-section ul {
+            color: #868784;
+            padding-left: 20px;
+        }
+
+        .tips-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .data-preview {
+            background: white;
+            border: 2px solid #beb7df;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .data-preview h3 {
+            background: #34113f;
+            color: white;
+            padding: 12px 15px;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+
+        .preview-table th {
+            background: #f8f9fa;
+            color: #34113f;
+            font-weight: 600;
+        }
+
+        .preview-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .download-button {
+                display: block;
+                margin: 10px 0;
+            }
+            
+            .preview-table {
+                font-size: 0.8rem;
+            }
+            
+            .preview-table th,
+            .preview-table td {
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Portfolio Activity: Data Management Project</h1>
+            <p>Create a comprehensive data management demonstration for your professional portfolio</p>
+        </div>
+        
+        <div class="content">
+            <div class="download-section">
+                <h2>📊 Download Sample Dataset</h2>
+                <p>Get started with our comprehensive student enrollment dataset containing 100+ records with realistic LMS data.</p>
+                <button class="download-button" onclick="downloadCSV()">
+                    📥 Download Student_Enrollment_Data.csv
+                </button>
+                <button class="download-button" onclick="downloadExcel()">
+                    📊 Download Student_Enrollment_Data.xlsx
+                </button>
+            </div>
+
+            <div data-preview class="data-preview">
+                <h3>Dataset Preview - Sample Records</h3>
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Year Level</th>
+                            <th>Status</th>
+                            <th>Enrollment Date</th>
+                            <th>Credits</th>
+                            <th>GPA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>STU001</td>
+                            <td>Emma Johnson</td>
+                            <td>Computer Science</td>
+                            <td>Junior</td>
+                            <td>Active</td>
+                            <td>2024-08-15</td>
+                            <td>15</td>
+                            <td>3.67</td>
+                        </tr>
+                        <tr>
+                            <td>STU002</td>
+                            <td>Michael Chen</td>
+                            <td>Engineering</td>
+                            <td>Senior</td>
+                            <td>Active</td>
+                            <td>2024-01-12</td>
+                            <td>18</td>
+                            <td>3.85</td>
+                        </tr>
+                        <tr>
+                            <td>STU003</td>
+                            <td>Sarah Williams</td>
+                            <td>Biology</td>
+                            <td>Sophomore</td>
+                            <td>Pending</td>
+                            <td>2024-08-20</td>
+                            <td>12</td>
+                            <td>3.42</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: #868784; font-style: italic;">
+                                + 97 more records in the full dataset...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="instructions-section">
+                <h2>📋 Portfolio Project Instructions</h2>
+                
+                <div class="step-card">
+                    <h3>Step 1: Data Analysis & Planning</h3>
+                    <p>Before starting, analyze the dataset and plan your approach:</p>
+                    <ul>
+                        <li>Review the dataset structure and identify data types</li>
+                        <li>Note any data quality issues (missing values, inconsistencies)</li>
+                        <li>Plan 3-5 different sorting and filtering scenarios that would be useful for an LMS administrator</li>
+                        <li>Consider what reports would be most valuable to different stakeholders</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <h3>Step 2: Create Multiple Data Views</h3>
+                    <p>Demonstrate various sorting and filtering techniques:</p>
+                    <ul>
+                        <li><strong>Academic View:</strong> Sort by GPA (high to low) and filter by year level</li>
+                        <li><strong>Administrative View:</strong> Filter by enrollment status and sort by enrollment date</li>
+                        <li><strong>Department View:</strong> Group by department, then sort by student name</li>
+                        <li><strong>At-Risk Students:</strong> Filter for students with GPA below 3.0 or pending status</li>
+                        <li><strong>Recent Enrollments:</strong> Filter for students enrolled in the last 30 days</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <h3>Step 3: Document Your Process</h3>
+                    <p>Create professional documentation for each view:</p>
+                    <ul>
+                        <li>Screenshot of the sorted/filtered data</li>
+                        <li>Step-by-step instructions for recreating the view</li>
+                        <li>Business rationale: Why would an administrator need this view?</li>
+                        <li>Key insights discovered from each data arrangement</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <h3>Step 4: Create Summary Reports</h3>
+                    <p>Generate meaningful summaries from your sorted data:</p>
+                    <ul>
+                        <li>Department enrollment statistics</li>
+                        <li>Status distribution analysis</li>
+                        <li>Enrollment trends by date</li>
+                        <li>Academic performance insights</li>
+                        <li>Recommendations based on your findings</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>💡 What Makes This Portfolio-Worthy?</h3>
+                <p>This project demonstrates essential LMS administration skills:</p>
+                <ul>
+                    <li><strong>Technical Proficiency:</strong> Advanced Excel/spreadsheet functions</li>
+                    <li><strong>Data Analysis:</strong> Ability to extract meaningful insights from raw data</li>
+                    <li><strong>Problem-Solving:</strong> Creating views that solve real administrative challenges</li>
+                    <li><strong>Communication:</strong> Clear documentation and professional presentation</li>
+                    <li><strong>Business Acumen:</strong> Understanding stakeholder needs and priorities</li>
+                </ul>
+            </div>
+
+            <div class="portfolio-requirements">
+                <h2>📁 Portfolio Deliverables</h2>
+                
+                <div class="requirement-item">
+                    <h4>1. Master Spreadsheet</h4>
+                    <p>Excel/Google Sheets file with multiple worksheets showing different data views, formulas, and pivot tables.</p>
+                </div>
+                
+                <div class="requirement-item">
+                    <h4>2. Process Documentation</h4>
+                    <p>2-3 page PDF explaining your methodology, step-by-step processes, and rationale for each data view.</p>
+                </div>
+                
+                <div class="requirement-item">
+                    <h4>3. Executive Summary</h4>
+                    <p>1-page summary highlighting key findings, insights, and recommendations for LMS administrators.</p>
+                </div>
+                
+                <div class="requirement-item">
+                    <h4>4. Visual Presentation</h4>
+                    <p>5-7 slide PowerPoint/PDF presentation showcasing your data management skills and discoveries.</p>
+                </div>
+            </div>
+
+            <div class="tips-section">
+                <h3>🎯 Pro Tips for Success</h3>
+                <ul>
+                    <li><strong>Use Conditional Formatting:</strong> Highlight important data points (low GPAs, recent enrollments, etc.)</li>
+                    <li><strong>Create Pivot Tables:</strong> Show your advanced Excel skills with dynamic data summaries</li>
+                    <li><strong>Include Formulas:</strong> Use VLOOKUP, COUNTIF, SUMIF to demonstrate technical competency</li>
+                    <li><strong>Think Like an Administrator:</strong> Focus on practical, real-world applications</li>
+                    <li><strong>Tell a Story:</strong> Connect your data analysis to actionable insights</li>
+                    <li><strong>Be Professional:</strong> Use consistent formatting, clear labels, and proper documentation</li>
+                    <li><strong>Show Problem-Solving:</strong> Address data quality issues and explain your solutions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate comprehensive student data
+        function generateStudentData() {
+            const departments = ['Computer Science', 'Engineering', 'Biology', 'Mathematics', 'Psychology', 'Business', 'English', 'History', 'Chemistry', 'Physics'];
+            const yearLevels = ['Freshman', 'Sophomore', 'Junior', 'Senior'];
+            const statuses = ['Active', 'Inactive', 'Pending', 'Graduated', 'Withdrawn'];
+            
+            const firstNames = ['Emma', 'Michael', 'Sarah', 'James', 'Lisa', 'David', 'Maria', 'Kevin', 'Ashley', 'Ryan', 'Jessica', 'Brandon', 'Amanda', 'Christopher', 'Nicole', 'Daniel', 'Jennifer', 'Matthew', 'Michelle', 'Andrew', 'Stephanie', 'Joshua', 'Elizabeth', 'Anthony', 'Melissa', 'Joseph', 'Amy', 'Mark', 'Kimberly', 'Steven', 'Angela', 'Thomas', 'Helen', 'Brian', 'Laura', 'Edward', 'Rebecca', 'Donald', 'Dorothy', 'Ronald', 'Lisa', 'Kenneth', 'Nancy', 'Paul', 'Karen', 'Frank', 'Betty', 'Scott', 'Sandra', 'Eric'];
+            
+            const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores', 'Green', 'Adams', 'Nelson', 'Baker', 'Hall', 'Rivera', 'Campbell', 'Mitchell', 'Carter', 'Roberts'];
+
+            const data = [];
+            const headers = ['Student ID', 'First Name', 'Last Name', 'Full Name', 'Email', 'Department', 'Year Level', 'Status', 'Enrollment Date', 'Credits Enrolled', 'GPA', 'Advisor', 'Phone', 'Address'];
+            
+            data.push(headers);
+
+            // Generate enrollment dates
+            function randomDate(start, end) {
+                const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+                return date.toISOString().split('T')[0];
+            }
+
+            for (let i = 1; i <= 120; i++) {
+                const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                const department = departments[Math.floor(Math.random() * departments.length)];
+                const yearLevel = yearLevels[Math.floor(Math.random() * yearLevels.length)];
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                const enrollDate = randomDate(new Date(2024, 0, 1), new Date(2024, 8, 30));
+                const credits = Math.floor(Math.random() * 9) + 12; // 12-20 credits
+                const gpa = (Math.random() * 2 + 2).toFixed(2); // 2.00-4.00 GPA
+                const advisor = `Dr. ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+                const phone = `(${Math.floor(Math.random() * 900) + 100}) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`;
+                const address = `${Math.floor(Math.random() * 9999) + 1} ${['Main', 'Oak', 'Pine', 'Elm', 'Maple'][Math.floor(Math.random() * 5)]} St`;
+
+                data.push([
+                    `STU${i.toString().padStart(3, '0')}`,
+                    firstName,
+                    lastName,
+                    `${firstName} ${lastName}`,
+                    `${firstName.toLowerCase()}.${lastName.toLowerCase()}@university.edu`,
+                    department,
+                    yearLevel,
+                    status,
+                    enrollDate,
+                    credits,
+                    gpa,
+                    advisor,
+                    phone,
+                    address
+                ]);
+            }
+
+            return data;
+        }
+
+        function downloadCSV() {
+            const data = generateStudentData();
+            const csvContent = data.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'Student_Enrollment_Data.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function downloadExcel() {
+            const data = generateStudentData();
+            
+            // Create Excel content as HTML table (which Excel can read)
+            let excelContent = `
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <style>
+                        table { border-collapse: collapse; }
+                        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <table>
+            `;
+            
+            data.forEach((row, index) => {
+                if (index === 0) {
+                    excelContent += '<tr>' + row.map(cell => `<th>${cell}</th>`).join('') + '</tr>';
+                } else {
+                    excelContent += '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+                }
+            });
+            
+            excelContent += '</table></body></html>';
+            
+            const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'Student_Enrollment_Data.xlsx');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
