@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pivot Table Interface Diagram</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #beb7df 0%, #aba9bf 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(52, 17, 63, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #34113f, #aba9bf);
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 400;
+        }
+        
+        .interface-container {
+            display: flex;
+            min-height: 600px;
+            position: relative;
+        }
+        
+        .main-area {
+            flex: 2;
+            padding: 30px;
+            background: #f8f9fa;
+            border-right: 2px solid #d4f2d2;
+        }
+        
+        .pivot-areas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 15px;
+            height: 400px;
+        }
+        
+        .pivot-area {
+            border: 2px dashed #868784;
+            border-radius: 8px;
+            padding: 20px;
+            background: white;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .pivot-area:hover {
+            border-color: #34113f;
+            background: rgba(212, 242, 210, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 17, 63, 0.1);
+        }
+        
+        .pivot-area.active {
+            border-color: #34113f;
+            background: rgba(212, 242, 210, 0.3);
+            border-style: solid;
+        }
+        
+        .area-title {
+            font-weight: bold;
+            color: #34113f;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .area-subtitle {
+            color: #868784;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .filters-area {
+            grid-column: 1 / -1;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(190, 183, 223, 0.1), rgba(171, 169, 191, 0.1));
+        }
+        
+        .rows-area {
+            background: linear-gradient(135deg, rgba(212, 242, 210, 0.1), rgba(212, 242, 210, 0.2));
+        }
+        
+        .columns-area {
+            background: linear-gradient(135deg, rgba(171, 169, 191, 0.1), rgba(190, 183, 223, 0.1));
+        }
+        
+        .values-area {
+            grid-column: 1 / -1;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(52, 17, 63, 0.05), rgba(134, 135, 132, 0.1));
+        }
+        
+        .fields-panel {
+            flex: 1;
+            background: white;
+            padding: 30px 25px;
+            border-left: 1px solid #e9ecef;
+        }
+        
+        .fields-header {
+            background: #34113f;
+            color: white;
+            padding: 15px;
+            margin: -25px -25px 20px -25px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .fields-header:hover {
+            background: #aba9bf;
+        }
+        
+        .field-list {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .field-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .field-item:hover {
+            background: rgba(212, 242, 210, 0.3);
+            border-color: #34113f;
+            transform: translateX(5px);
+        }
+        
+        .field-icon {
+            width: 20px;
+            height: 20px;
+            background: #beb7df;
+            border-radius: 4px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+        }
+        
+        .explanation-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            background: white;
+            border: 2px solid #34113f;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .explanation-panel.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        
+        .explanation-title {
+            font-weight: bold;
+            color: #34113f;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #d4f2d2;
+            padding-bottom: 8px;
+        }
+        
+        .explanation-text {
+            color: #495057;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .explanation-example {
+            background: rgba(212, 242, 210, 0.2);
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #34113f;
+            font-size: 13px;
+            color: #34113f;
+            font-style: italic;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #868784;
+            cursor: pointer;
+            padding: 0;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            color: #34113f;
+        }
+        
+        .instructions {
+            text-align: center;
+            color: #868784;
+            font-style: italic;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(212, 242, 210, 0.1);
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Interactive Pivot Table Interface</h1>
+            <p>Click on any area to learn about its purpose</p>
+        </div>
+        
+        <div class="instructions">
+            Click on the purple areas or field list to explore how pivot tables work
+        </div>
+        
+        <div class="interface-container">
+            <div class="main-area">
+                <div class="pivot-areas">
+                    <div class="pivot-area filters-area" data-target="filters">
+                        <div class="area-title">🔍 FILTERS</div>
+                        <div class="area-subtitle">Drag fields here to filter your data</div>
+                    </div>
+                    
+                    <div class="pivot-area rows-area" data-target="rows">
+                        <div class="area-title">📋 ROWS</div>
+                        <div class="area-subtitle">Categories to group vertically</div>
+                    </div>
+                    
+                    <div class="pivot-area columns-area" data-target="columns">
+                        <div class="area-title">📊 COLUMNS</div>
+                        <div class="area-subtitle">Categories to compare across</div>
+                    </div>
+                    
+                    <div class="pivot-area values-area" data-target="values">
+                        <div class="area-title">🔢 VALUES</div>
+                        <div class="area-subtitle">Numbers to calculate and summarize</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="fields-panel">
+                <div class="fields-header" data-target="fields">
+                    📁 Field List
+                </div>
+                
+                <div class="field-list">
+                    <div class="field-item">
+                        <div class="field-icon">ID</div>
+                        Employee ID
+                    </div>
+                    <div class="field-item">
+                        <div class="field-icon">👤</div>
+                        Employee Name
+                    </div>
+                    <div class="field-item">
+                        <div class="field-icon">🏢</div>
+                        Department
+                    </div>
+                    <div class="field-item">
+                        <div class="field-icon">📚</div>
+                        Course Title
+                    </div>
+                    <div class="field-item">
+                        <div class="field-icon">✅</div>
+                        Completion Status
+                    </div>
+                    <div class="field-item">
+                        <div class="field-icon">📅</div>
+                        Completion Date
+                    </div>
+                    <div class="field-item">
+                        <div class="field-icon">⏱️</div>
+                        Course Duration
+                    </div>
+                    <div class="field-item">
+                        <div class="field-icon">👔</div>
+                        Manager
+                    </div>
+                </div>
+            </div>
+            
+            <div class="explanation-panel" id="explanationPanel">
+                <button class="close-btn" onclick="hideExplanation()">×</button>
+                <div class="explanation-title" id="explanationTitle"></div>
+                <div class="explanation-text" id="explanationText"></div>
+                <div class="explanation-example" id="explanationExample"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const explanations = {
+            filters: {
+                title: "🔍 Filters Area",
+                text: "Use filters to limit which data appears in your pivot table. This is like applying a search filter to your entire dataset before analysis.",
+                example: "Example: Drag 'Manager' here to see data for only specific managers, or 'Department' to focus on one department at a time."
+            },
+            rows: {
+                title: "📋 Rows Area", 
+                text: "Fields placed here become the row headers of your pivot table. Each unique value creates a new row, organizing your data vertically.",
+                example: "Example: Drag 'Department' here to see each department as a separate row, showing completion data for Marketing, IT, HR, etc."
+            },
+            columns: {
+                title: "📊 Columns Area",
+                text: "Fields here become column headers, allowing you to compare data side-by-side across different categories horizontally.",
+                example: "Example: Drag 'Completion Status' here to create columns for 'Complete' vs 'Incomplete', making it easy to compare rates."
+            },
+            values: {
+                title: "🔢 Values Area",
+                text: "This is where your calculations happen. Fields here are summarized using functions like COUNT, SUM, or AVERAGE to provide meaningful metrics.",
+                example: "Example: Drag 'Employee ID' here (set to COUNT) to count how many employees fall into each category combination."
+            },
+            fields: {
+                title: "📁 Field List Panel",
+                text: "This panel contains all available fields from your dataset. Simply drag and drop these fields into the four areas to build your analysis.",
+                example: "Pro tip: You can drag the same field to multiple areas! For instance, use 'Department' in both Rows and Filters for detailed analysis."
+            }
+        };
+        
+        function showExplanation(target) {
+            const panel = document.getElementById('explanationPanel');
+            const title = document.getElementById('explanationTitle');
+            const text = document.getElementById('explanationText');
+            const example = document.getElementById('explanationExample');
+            
+            if (explanations[target]) {
+                title.textContent = explanations[target].title;
+                text.textContent = explanations[target].text;
+                example.textContent = explanations[target].example;
+                panel.classList.add('show');
+                
+                // Remove active class from all areas
+                document.querySelectorAll('.pivot-area').forEach(area => {
+                    area.classList.remove('active');
+                });
+                
+                // Add active class to clicked area
+                if (target !== 'fields') {
+                    document.querySelector(`[data-target="${target}"]`).classList.add('active');
+                }
+            }
+        }
+        
+        function hideExplanation() {
+            document.getElementById('explanationPanel').classList.remove('show');
+            document.querySelectorAll('.pivot-area').forEach(area => {
+                area.classList.remove('active');
+            });
+        }
+        
+        // Add click event listeners
+        document.querySelectorAll('[data-target]').forEach(element => {
+            element.addEventListener('click', function() {
+                const target = this.getAttribute('data-target');
+                showExplanation(target);
+            });
+        });
+        
+        // Close panel when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.explanation-panel') && !e.target.closest('[data-target]')) {
+                hideExplanation();
+            }
+        });
+        
+        // Add hover effects to field items
+        document.querySelectorAll('.field-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(8px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+    </script>
+</body>
+</html>
