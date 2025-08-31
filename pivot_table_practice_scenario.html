@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pivot Table Practice Scenario</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #beb7df 0%, #aba9bf 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(52, 17, 63, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #34113f, #aba9bf);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 400;
+        }
+        
+        .header p {
+            margin: 15px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content-section {
+            padding: 40px;
+        }
+        
+        .download-section {
+            background: rgba(212, 242, 210, 0.2);
+            border: 2px solid #34113f;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #34113f, #aba9bf);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 17, 63, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 17, 63, 0.4);
+        }
+        
+        .download-info {
+            margin-top: 15px;
+            color: #34113f;
+            font-size: 14px;
+            font-style: italic;
+        }
+        
+        .exercise {
+            background: white;
+            border: 2px solid #d4f2d2;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(52, 17, 63, 0.1);
+        }
+        
+        .exercise-header {
+            background: #34113f;
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .exercise-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .exercise-time {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .exercise-content {
+            padding: 25px;
+        }
+        
+        .exercise-goal {
+            background: rgba(212, 242, 210, 0.2);
+            border-left: 4px solid #34113f;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .exercise-goal h4 {
+            margin: 0 0 8px 0;
+            color: #34113f;
+            font-size: 1.1em;
+        }
+        
+        .steps-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .step-item {
+            counter-increment: step-counter;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #aba9bf;
+            position: relative;
+        }
+        
+        .step-item::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            background: #34113f;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #34113f;
+            margin-bottom: 8px;
+            margin-left: 35px;
+        }
+        
+        .step-details {
+            margin-left: 35px;
+            color: #495057;
+            line-height: 1.6;
+        }
+        
+        .step-instructions {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #34113f;
+        }
+        
+        .checkpoint {
+            background: rgba(171, 169, 191, 0.1);
+            border: 2px dashed #aba9bf;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .checkpoint h5 {
+            margin: 0 0 10px 0;
+            color: #34113f;
+            font-size: 1em;
+        }
+        
+        .checkpoint-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .checkpoint-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #495057;
+        }
+        
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #aba9bf;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox.checked {
+            background: #34113f;
+            border-color: #34113f;
+            position: relative;
+        }
+        
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .dataset-preview {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .dataset-title {
+            font-weight: bold;
+            color: #34113f;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .dataset-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border-left: 3px solid #34113f;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #34113f;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #868784;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sample-data {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        
+        .sample-data table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .sample-data th {
+            background: #34113f;
+            color: white;
+            padding: 8px 10px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        
+        .sample-data td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sample-data tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .completion-status {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .status-complete {
+            background: rgba(52, 17, 63, 0.1);
+            color: #34113f;
+        }
+        
+        .status-incomplete {
+            background: rgba(134, 135, 132, 0.1);
+            color: #868784;
+        }
+        
+        .portfolio-tip {
+            background: rgba(190, 183, 223, 0.1);
+            border: 2px solid #beb7df;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .portfolio-tip h4 {
+            color: #34113f;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tip-list {
+            color: #495057;
+            line-height: 1.6;
+            margin: 10px 0 0 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Pivot Table Practice Scenario</h1>
+            <p>Master pivot tables with real LMS completion data</p>
+        </div>
+        
+        <div class="content-section">
+            <div class="download-section">
+                <button class="download-btn" onclick="downloadExcel()">
+                    📥 Download Practice Dataset (Excel)
+                </button>
+                <div class="download-info">
+                    500 completion records • 5 departments • 10 courses • Ready for analysis
+                </div>
+            </div>
+            
+            <div class="dataset-preview">
+                <div class="dataset-title">📋 Dataset Overview</div>
+                <div class="dataset-stats">
+                    <div class="stat-box">
+                        <span class="stat-number">500</span>
+                        <span class="stat-label">Total Records</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">5</span>
+                        <span class="stat-label">Departments</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">10</span>
+                        <span class="stat-label">Courses</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">8</span>
+                        <span class="stat-label">Data Fields</span>
+                    </div>
+                </div>
+                
+                <div class="sample-data">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Employee_ID</th>
+                                <th>Employee_Name</th>
+                                <th>Department</th>
+                                <th>Course_Title</th>
+                                <th>Completion_Status</th>
+                                <th>Completion_Date</th>
+                                <th>Course_Duration_Hours</th>
+                                <th>Manager</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>E1001</td>
+                                <td>Sarah Johnson</td>
+                                <td>Marketing</td>
+                                <td>Digital Marketing Basics</td>
+                                <td><span class="completion-status status-complete">Complete</span></td>
+                                <td>2024-01-15</td>
+                                <td>4.5</td>
+                                <td>Lisa Chen</td>
+                            </tr>
+                            <tr>
+                                <td>E1002</td>
+                                <td>Mike Rodriguez</td>
+                                <td>IT</td>
+                                <td>Cybersecurity Fundamentals</td>
+                                <td><span class="completion-status status-incomplete">Incomplete</span></td>
+                                <td></td>
+                                <td>6.0</td>
+                                <td>Tom Wilson</td>
+                            </tr>
+                            <tr>
+                                <td>E1003</td>
+                                <td>Lisa Wong</td>
+                                <td>HR</td>
+                                <td>Employee Relations</td>
+                                <td><span class="completion-status status-complete">Complete</span></td>
+                                <td>2024-01-18</td>
+                                <td>3.0</td>
+                                <td>David Kim</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-header">
+                    <div class="exercise-title">
+                        🎯 Exercise 1: Basic Department Summary
+                    </div>
+                    <div class="exercise-time">5 minutes</div>
+                </div>
+                <div class="exercise-content">
+                    <div class="exercise-goal">
+                        <h4>🎯 Goal</h4>
+                        Create a pivot table showing completion counts by department, add completion status breakdown, and format as percentages.
+                    </div>
+                    
+                    <ol class="steps-list">
+                        <li class="step-item">
+                            <div class="step-title">Select Your Data Range</div>
+                            <div class="step-details">
+                                Click anywhere in your dataset, then press <strong>Ctrl+A</strong> to select all data
+                                <div class="step-instructions">Shortcut: Ctrl+A selects the entire data table automatically</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Insert Pivot Table</div>
+                            <div class="step-details">
+                                Go to <strong>Insert</strong> tab → Click <strong>PivotTable</strong> → Choose <strong>New Worksheet</strong>
+                                <div class="step-instructions">Path: Insert > PivotTable > New Worksheet > OK</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Set Up Department Rows</div>
+                            <div class="step-details">
+                                Drag <strong>Department</strong> field to the <strong>Rows</strong> area
+                                <div class="step-instructions">This creates a row for each department (Marketing, IT, HR, Finance, Operations)</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Add Completion Status Columns</div>
+                            <div class="step-details">
+                                Drag <strong>Completion_Status</strong> field to the <strong>Columns</strong> area
+                                <div class="step-instructions">This creates "Complete" and "Incomplete" columns</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Count Employees</div>
+                            <div class="step-details">
+                                Drag <strong>Employee_ID</strong> field to the <strong>Values</strong> area
+                                <div class="step-instructions">This will automatically COUNT the number of employees in each category</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Format as Percentages</div>
+                            <div class="step-details">
+                                Right-click any number → <strong>Value Field Settings</strong> → <strong>Show Values As</strong> → <strong>% of Row Total</strong>
+                                <div class="step-instructions">This shows completion rates as percentages for each department</div>
+                            </div>
+                        </li>
+                    </ol>
+                    
+                    <div class="checkpoint">
+                        <h5>✅ Success Checkpoint</h5>
+                        <p>You should now see completion percentages by department. Check off when complete:</p>
+                        <div class="checkpoint-items">
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Each department shows as a row
+                            </div>
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Complete/Incomplete columns visible
+                            </div>
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Percentages display correctly
+                            </div>
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Can identify highest/lowest rates
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-header">
+                    <div class="exercise-title">
+                        📈 Exercise 2: Course Performance Analysis
+                    </div>
+                    <div class="exercise-time">7 minutes</div>
+                </div>
+                <div class="exercise-content">
+                    <div class="exercise-goal">
+                        <h4>🎯 Goal</h4>
+                        Modify your pivot table to show courses within departments, add completion dates, and identify top/bottom performing courses.
+                    </div>
+                    
+                    <ol class="steps-list">
+                        <li class="step-item">
+                            <div class="step-title">Add Course Detail</div>
+                            <div class="step-details">
+                                Drag <strong>Course_Title</strong> field to the <strong>Rows</strong> area, below Department
+                                <div class="step-instructions">This creates a hierarchy: Department > Course Title</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Remove Percentage Formatting</div>
+                            <div class="step-details">
+                                Right-click values → <strong>Value Field Settings</strong> → <strong>Show Values As</strong> → <strong>No Calculation</strong>
+                                <div class="step-instructions">Switch back to raw counts to see actual numbers</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Add Completion Date Filter</div>
+                            <div class="step-details">
+                                Drag <strong>Completion_Date</strong> field to the <strong>Filters</strong> area
+                                <div class="step-instructions">This allows you to filter by specific date ranges</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Sort by Performance</div>
+                            <div class="step-details">
+                                Right-click on any "Complete" value → <strong>Sort</strong> → <strong>Sort Largest to Smallest</strong>
+                                <div class="step-instructions">This ranks courses by completion count</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Identify Top Performers</div>
+                            <div class="step-details">
+                                Note the courses with highest completion counts and lowest incomplete counts
+                                <div class="step-instructions">Look for courses with high completion rates across departments</div>
+                            </div>
+                        </li>
+                    </ol>
+                    
+                    <div class="checkpoint">
+                        <h5>✅ Success Checkpoint</h5>
+                        <p>Your analysis should reveal course performance patterns:</p>
+                        <div class="checkpoint-items">
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Courses grouped under departments
+                            </div>
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Date filter is functional
+                            </div>
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Data sorted by performance
+                            </div>
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Top/bottom courses identified
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-header">
+                    <div class="exercise-title">
+                        👔 Exercise 3: Manager Dashboard
+                    </div>
+                    <div class="exercise-time">5 minutes</div>
+                </div>
+                <div class="exercise-content">
+                    <div class="exercise-goal">
+                        <h4>🎯 Goal</h4>
+                        Create a new pivot table focused on manager oversight, showing each manager's team completion rates.
+                    </div>
+                    
+                    <ol class="steps-list">
+                        <li class="step-item">
+                            <div class="step-title">Create New Pivot Table</div>
+                            <div class="step-details">
+                                Go to your original data sheet → Select data → <strong>Insert</strong> → <strong>PivotTable</strong> → <strong>New Worksheet</strong>
+                                <div class="step-instructions">Start fresh for the manager-focused view</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Set Up Manager Rows</div>
+                            <div class="step-details">
+                                Drag <strong>Manager</strong> field to the <strong>Rows</strong> area
+                                <div class="step-instructions">Each manager becomes a row</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Add Completion Status</div>
+                            <div class="step-details">
+                                Drag <strong>Completion_Status</strong> to <strong>Columns</strong> and <strong>Employee_ID</strong> to <strong>Values</strong>
+                                <div class="step-instructions">Count completions by manager and status</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Calculate Completion Rates</div>
+                            <div class="step-details">
+                                Right-click values → <strong>Value Field Settings</strong> → <strong>Show Values As</strong> → <strong>% of Row Total</strong>
+                                <div class="step-instructions">Show each manager's completion percentage</div>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-title">Add Team Size Context</div>
+                            <div class="step-details">
+                                Drag another <strong>Employee_ID</strong> to <strong>Values</strong> (keep as Count, no percentage)
+                                <div class="step-instructions">Shows raw numbers alongside percentages</div>
+                            </div>
+                        </li>
+                    </ol>
+                    
+                    <div class="checkpoint">
+                        <h5>✅ Success Checkpoint</h5>
+                        <p>Your manager dashboard should provide oversight insights:</p>
+                        <div class="checkpoint-items">
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Each manager listed as row
+                            </div>
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Team completion rates visible
+                            </div>
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Raw counts and percentages shown
+                            </div>
+                            <div class="checkpoint-item">
+                                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+                                Can identify coaching needs
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="portfolio-tip">
+                <h4>💼 Portfolio Building Tip</h4>
+                <p>Save your completed Excel file with all three pivot tables as evidence of your data analysis skills!</p>
+                <ul class="tip-list">
+                    <li><strong>Rename worksheets</strong> to "Dept Summary", "Course Analysis", "Manager Dashboard"</li>
+                    <li><strong>Add titles</strong> and formatting to make charts presentation-ready</li>
+                    <li><strong>Include insights</strong> as text boxes explaining your findings</li>
+                    <li><strong>Save multiple versions</strong> - one working file, one polished presentation file</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleCheckbox(checkbox) {
+            checkbox.classList.toggle('checked');
+        }
+        
+        function downloadExcel() {
+            // Generate sample dataset
+            const data = generateSampleData();
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            
+            // Add data sheet
+            const ws = XLSX.utils.json_to_sheet(data);
+            
+            // Set column widths
+            ws['!cols'] = [
+                { width: 12 }, // Employee_ID
+                { width: 20 }, // Employee_Name
+                { width: 15 }, // Department
+                { width: 25 }, // Course_Title
+                { width: 15 }, // Completion_Status
+                { width: 15 }, // Completion_Date
+                { width: 18 }, // Course_Duration_Hours
+                { width: 18 }  // Manager
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, ws, "LMS_Completion_Data");
+            
+            // Save file
+            XLSX.writeFile(wb, "LMS_Pivot_Table_Practice_Data.xlsx");
+        }
+        
+        function generateSampleData() {
+            const departments = ['Marketing', 'IT', 'HR', 'Finance', 'Operations'];
+            const courses = [
+                'Digital Marketing Basics', 'Advanced Excel', 'Leadership Skills',
+                'Cybersecurity Fundamentals', 'Project Management', 'Employee Relations',
+                'Financial Analysis', 'Database Management', 'Quality Assurance',
+                'Communication Skills'
+            ];
+            const managers = {
+                'Marketing': ['Lisa Chen', 'Mark Rodriguez'],
+                'IT': ['Tom Wilson', 'Sarah Tech'],
+                'HR': ['David Kim', 'Rachel Adams'],
+                'Finance': ['Rachel Davis', 'Michael Ford'],
+                'Operations': ['Steve Miller', 'Anna Johnson']
+            };
+            
+            const firstNames = ['Sarah', 'Mike', 'Lisa', 'Tom', 'Emma', 'John', 'Ana', 'David', 'Rachel', 'Steve', 'Jennifer', 'Alex', 'Maria', 'Kevin', 'Ashley', 'Chris', 'Amanda', 'Daniel', 'Nicole', 'Ryan'];
+            const lastNames = ['Johnson', 'Rodriguez', 'Wong', 'Anderson', 'Davis', 'Smith', 'Garcia', 'Kim', 'Turner', 'Miller', 'Lee', 'Thompson', 'Santos', 'Brown', 'Wilson', 'Martinez', 'Taylor', 'Moore', 'Jackson', 'White'];
+            
+            const data = [];
+            
+            for (let i = 1; i <= 500; i++) {
+                const dept = departments[Math.floor(Math.random() * departments.length)];
+                const course = courses[Math.floor(Math.random() * courses.length)];
+                const manager = managers[dept][Math.floor(Math.random() * managers[dept].length)];
+                const isComplete = Math.random() > 0.25; // 75% completion rate overall
+                const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                
+                // Generate realistic completion dates
+                let completionDate = '';
+                if (isComplete) {
+                    const startDate = new Date('2024-01-01');
+                    const endDate = new Date('2024-02-28');
+                    const randomTime = startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime());
+                    const randomDate = new Date(randomTime);
+                    completionDate = randomDate.toISOString().split('T')[0];
+                }
+                
+                data.push({
+                    Employee_ID: `E${String(i).padStart(4, '0')}`,
+                    Employee_Name: `${firstName} ${lastName}`,
+                    Department: dept,
+                    Course_Title: course,
+                    Completion_Status: isComplete ? 'Complete' : 'Incomplete',
+                    Completion_Date: completionDate,
+                    Course_Duration_Hours: (Math.random() * 6 + 2
