@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Transformation Reveal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #beb7df 0%, #aba9bf 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(52, 17, 63, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #34113f, #aba9bf);
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2em;
+            font-weight: 400;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content-area {
+            position: relative;
+            min-height: 600px;
+            overflow: hidden;
+        }
+        
+        .data-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 30px;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .data-view.hidden {
+            opacity: 0;
+            transform: translateX(-100%);
+            pointer-events: none;
+        }
+        
+        .before-view {
+            background: rgba(134, 135, 132, 0.05);
+        }
+        
+        .after-view {
+            background: rgba(212, 242, 210, 0.1);
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        
+        .after-view.shown {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .section-title {
+            background: #34113f;
+            color: white;
+            padding: 15px 20px;
+            margin: -30px -30px 25px -30px;
+            font-size: 1.3em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .transform-btn {
+            background: #d4f2d2;
+            color: #34113f;
+            border: 2px solid #34113f;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(52, 17, 63, 0.2);
+        }
+        
+        .transform-btn:hover {
+            background: #34113f;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 17, 63, 0.3);
+        }
+        
+        .transform-btn.processing {
+            background: #aba9bf;
+            color: white;
+            cursor: not-allowed;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .raw-data-table {
+            border: 1px solid #868784;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .raw-data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .raw-data-table th {
+            background: #868784;
+            color: white;
+            padding: 10px 8px;
+            font-weight: bold;
+            text-align: left;
+            border-bottom: 1px solid #34113f;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .raw-data-table td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            border-right: 1px solid #eee;
+        }
+        
+        .raw-data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .raw-data-table tr:hover {
+            background: rgba(212, 242, 210, 0.2);
+        }
+        
+        .status-complete {
+            background: rgba(52, 17, 63, 0.1);
+            color: #34113f;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        
+        .status-incomplete {
+            background: rgba(134, 135, 132, 0.1);
+            color: #868784;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        
+        .pivot-summary {
+            background: white;
+            border: 2px solid #34113f;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(52, 17, 63, 0.1);
+        }
+        
+        .pivot-header {
+            background: linear-gradient(135deg, #34113f, #aba9bf);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .pivot-content {
+            padding: 25px;
+        }
+        
+        .pivot-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .pivot-table th {
+            background: rgba(212, 242, 210, 0.3);
+            color: #34113f;
+            padding: 15px 12px;
+            font-weight: bold;
+            border: 1px solid #d4f2d2;
+            text-align: left;
+        }
+        
+        .pivot-table td {
+            padding: 12px;
+            border: 1px solid #eee;
+        }
+        
+        .pivot-table tr:hover {
+            background: rgba(212, 242, 210, 0.1);
+        }
+        
+        .dept-name {
+            font-weight: 600;
+            color: #34113f;
+        }
+        
+        .rate-high {
+            color: #34113f;
+            font-weight: bold;
+        }
+        
+        .rate-med {
+            color: #aba9bf;
+            font-weight: bold;
+        }
+        
+        .rate-low {
+            color: #868784;
+            font-weight: bold;
+        }
+        
+        .count-cell {
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .insights-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(212, 242, 210, 0.2);
+            border-radius: 8px;
+            border-left: 4px solid #34113f;
+        }
+        
+        .insights-box h4 {
+            margin: 0 0 15px 0;
+            color: #34113f;
+            font-size: 1.1em;
+        }
+        
+        .insights-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .insights-list li {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border-left: 3px solid #aba9bf;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .insights-list li::before {
+            content: '✓';
+            color: #34113f;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .data-count {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(52, 17, 63, 0.1);
+            color: #34113f;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .magic-wand {
+            font-size: 20px;
+            animation: sparkle 2s infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-10deg) scale(1.1); }
+            50% { transform: rotate(10deg) scale(1); }
+            75% { transform: rotate(-5deg) scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 The Magic of Pivot Tables</h1>
+            <p>Watch overwhelming data transform into actionable insights</p>
+        </div>
+        
+        <div class="content-area">
+            <!-- BEFORE VIEW -->
+            <div class="data-view before-view" id="beforeView">
+                <div class="section-title">
+                    😰 Raw Data Chaos (500+ rows)
+                    <button class="transform-btn" onclick="transformData()" id="transformBtn">
+                        <span class="magic-wand">✨</span>
+                        Transform with Pivot Table
+                    </button>
+                </div>
+                
+                <div class="data-count">Showing 15 of 500+ records</div>
+                
+                <div class="raw-data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Employee Name</th>
+                                <th>Department</th>
+                                <th>Course Title</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Duration</th>
+                                <th>Manager</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>E1001</td>
+                                <td>Sarah Johnson</td>
+                                <td>Marketing</td>
+                                <td>Digital Marketing Basics</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-01-15</td>
+                                <td>4.5 hrs</td>
+                                <td>Lisa Chen</td>
+                            </tr>
+                            <tr>
+                                <td>E1002</td>
+                                <td>Mike Rodriguez</td>
+                                <td>IT</td>
+                                <td>Cybersecurity Fundamentals</td>
+                                <td><span class="status-incomplete">Incomplete</span></td>
+                                <td>-</td>
+                                <td>6.0 hrs</td>
+                                <td>Tom Wilson</td>
+                            </tr>
+                            <tr>
+                                <td>E1003</td>
+                                <td>Lisa Wong</td>
+                                <td>HR</td>
+                                <td>Employee Relations</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-01-18</td>
+                                <td>3.0 hrs</td>
+                                <td>David Kim</td>
+                            </tr>
+                            <tr>
+                                <td>E1004</td>
+                                <td>Tom Anderson</td>
+                                <td>Finance</td>
+                                <td>Financial Analysis</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-01-20</td>
+                                <td>5.5 hrs</td>
+                                <td>Rachel Davis</td>
+                            </tr>
+                            <tr>
+                                <td>E1005</td>
+                                <td>Emma Davis</td>
+                                <td>Marketing</td>
+                                <td>Social Media Strategy</td>
+                                <td><span class="status-incomplete">Incomplete</span></td>
+                                <td>-</td>
+                                <td>2.5 hrs</td>
+                                <td>Lisa Chen</td>
+                            </tr>
+                            <tr>
+                                <td>E1006</td>
+                                <td>John Smith</td>
+                                <td>Operations</td>
+                                <td>Project Management</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-01-22</td>
+                                <td>8.0 hrs</td>
+                                <td>Steve Miller</td>
+                            </tr>
+                            <tr>
+                                <td>E1007</td>
+                                <td>Ana Garcia</td>
+                                <td>IT</td>
+                                <td>Database Management</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-01-25</td>
+                                <td>4.0 hrs</td>
+                                <td>Tom Wilson</td>
+                            </tr>
+                            <tr>
+                                <td>E1008</td>
+                                <td>David Kim</td>
+                                <td>HR</td>
+                                <td>Diversity & Inclusion</td>
+                                <td><span class="status-incomplete">Incomplete</span></td>
+                                <td>-</td>
+                                <td>2.0 hrs</td>
+                                <td>David Kim</td>
+                            </tr>
+                            <tr>
+                                <td>E1009</td>
+                                <td>Rachel Turner</td>
+                                <td>Finance</td>
+                                <td>Budget Planning</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-01-28</td>
+                                <td>3.5 hrs</td>
+                                <td>Rachel Davis</td>
+                            </tr>
+                            <tr>
+                                <td>E1010</td>
+                                <td>Steve Miller</td>
+                                <td>Operations</td>
+                                <td>Quality Assurance</td>
+                                <td><span class="status-incomplete">Incomplete</span></td>
+                                <td>-</td>
+                                <td>6.0 hrs</td>
+                                <td>Steve Miller</td>
+                            </tr>
+                            <tr>
+                                <td>E1011</td>
+                                <td>Jennifer Lee</td>
+                                <td>Marketing</td>
+                                <td>Content Marketing</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-01-30</td>
+                                <td>5.0 hrs</td>
+                                <td>Lisa Chen</td>
+                            </tr>
+                            <tr>
+                                <td>E1012</td>
+                                <td>Alex Thompson</td>
+                                <td>IT</td>
+                                <td>Cloud Computing</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-02-01</td>
+                                <td>7.0 hrs</td>
+                                <td>Tom Wilson</td>
+                            </tr>
+                            <tr>
+                                <td>E1013</td>
+                                <td>Maria Santos</td>
+                                <td>HR</td>
+                                <td>Performance Reviews</td>
+                                <td><span class="status-incomplete">Incomplete</span></td>
+                                <td>-</td>
+                                <td>4.0 hrs</td>
+                                <td>David Kim</td>
+                            </tr>
+                            <tr>
+                                <td>E1014</td>
+                                <td>Kevin Brown</td>
+                                <td>Finance</td>
+                                <td>Risk Management</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-02-03</td>
+                                <td>6.5 hrs</td>
+                                <td>Rachel Davis</td>
+                            </tr>
+                            <tr>
+                                <td>E1015</td>
+                                <td>Ashley Wilson</td>
+                                <td>Operations</td>
+                                <td>Supply Chain Mgmt</td>
+                                <td><span class="status-complete">Complete</span></td>
+                                <td>2024-02-05</td>
+                                <td>4.5 hrs</td>
+                                <td>Steve Miller</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- AFTER VIEW -->
+            <div class="data-view after-view" id="afterView">
+                <div class="section-title">
+                    🎉 Pivot Table Magic: Clear Insights!
+                    <button class="transform-btn" onclick="showBefore()" style="background: #aba9bf; color: white;">
+                        ← View Raw Data Again
+                    </button>
+                </div>
+                
+                <div class="data-count">All 500 records analyzed instantly!</div>
+                
+                <div class="pivot-summary">
+                    <div class="pivot-header">
+                        Course Completion Summary by Department
+                    </div>
+                    <div class="pivot-content">
+                        <table class="pivot-table">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th class="count-cell">Total Enrolled</th>
+                                    <th class="count-cell">Completed</th>
+                                    <th class="count-cell">Incomplete</th>
+                                    <th class="count-cell">Completion Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="dept-name">IT Department</td>
+                                    <td class="count-cell">127</td>
+                                    <td class="count-cell">110</td>
+                                    <td class="count-cell">17</td>
+                                    <td class="count-cell rate-high">87%</td>
+                                </tr>
+                                <tr>
+                                    <td class="dept-name">Finance</td>
+                                    <td class="count-cell">98</td>
+                                    <td class="count-cell">80</td>
+                                    <td class="count-cell">18</td>
+                                    <td class="count-cell rate-high">82%</td>
+                                </tr>
+                                <tr>
+                                    <td class="dept-name">Operations</td>
+                                    <td class="count-cell">89</td>
+                                    <td class="count-cell">68</td>
+                                    <td class="count-cell">21</td>
+                                    <td class="count-cell rate-med">76%</td>
+                                </tr>
+                                <tr>
+                                    <td class="dept-name">Marketing</td>
+                                    <td class="count-cell">112</td>
+                                    <td class="count-cell">79</td>
+                                    <td class="count-cell">33</td>
+                                    <td class="count-cell rate-med">71%</td>
+                                </tr>
+                                <tr>
+                                    <td class="dept-name">HR Department</td>
+                                    <td class="count-cell">74</td>
+                                    <td class="count-cell">47</td>
+                                    <td class="count-cell">27</td>
+                                    <td class="count-cell rate-low">64%</td>
+                                </tr>
+                                <tr style="border-top: 2px solid #34113f; font-weight: bold;">
+                                    <td class="dept-name">TOTAL</td>
+                                    <td class="count-cell">500</td>
+                                    <td class="count-cell">384</td>
+                                    <td class="count-cell">116</td>
+                                    <td class="count-cell">77%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="insights-box">
+                            <h4>🎯 Instant Actionable Insights:</h4>
+                            <ul class="insights-list">
+                                <li>HR needs immediate support (lowest at 64%)</li>
+                                <li>IT department leading performance (87%)</li>
+                                <li>3 departments below company average</li>
+                                <li>116 employees need follow-up</li>
+                                <li>Strong overall completion trend (77%)</li>
+                                <li>Marketing has highest incomplete count</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let isTransformed = false;
+        
+        function transformData() {
+            if (isTransformed) return;
+            
+            const beforeView = document.getElementById('beforeView');
+            const afterView = document.getElementById('afterView');
+            const transformBtn = document.getElementById('transformBtn');
+            
+            // Change button state
+            transformBtn.classList.add('processing');
+            transformBtn.innerHTML = '<span style="font-size: 16px;">⚡</span> Analyzing data...';
+            
+            // Wait for dramatic effect
+            setTimeout(() => {
+                beforeView.classList.add('hidden');
+                afterView.classList.add('shown');
+                isTransformed = true;
+            }, 1500);
+        }
+        
+        function showBefore() {
+            if (!isTransformed) return;
+            
+            const beforeView = document.getElementById('beforeView');
+            const afterView = document.getElementById('afterView');
+            const transformBtn = document.getElementById('transformBtn');
+            
+            beforeView.classList.remove('hidden');
+            afterView.classList.remove('shown');
+            
+            // Reset button
+            transformBtn.classList.remove('processing');
+            transformBtn.innerHTML = '<span class="magic-wand">✨</span> Transform with Pivot Table';
+            
+            isTransformed = false;
+        }
+        
+        // Add some sparkle effects
+        function addSparkleEffect() {
+            const sparkles = ['✨', '⭐', '💫', '🌟'];
+            const container = document.querySelector('.container');
+            
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.innerHTML = sparkles[Math.floor(Math.random() * sparkles.length)];
+                    sparkle.style.cssText = `
+                        position: absolute;
+                        top: ${Math.random() * 100}%;
+                        left: ${Math.random() * 100}%;
+                        font-size: 20px;
+                        pointer-events: none;
+                        animation: sparkleFloat 2s ease-out forwards;
+                        z-index: 1000;
+                    `;
+                    
+                    container.appendChild(sparkle);
+                    
+                    setTimeout(() => sparkle.remove(), 2000);
+                }, i * 200);
+            }
+        }
+        
+        // Add CSS animation for sparkles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkleFloat {
+                0% { opacity: 0; transform: translateY(20px) scale(0.5); }
+                50% { opacity: 1; transform: translateY(-10px) scale(1); }
+                100% { opacity: 0; transform: translateY(-30px) scale(0.8); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Add sparkle effect when transforming
+        const originalTransformData = transformData;
+        transformData = function() {
+            originalTransformData();
+            setTimeout(addSparkleEffect, 1000);
+        };
+    </script>
+</body>
+</html>
