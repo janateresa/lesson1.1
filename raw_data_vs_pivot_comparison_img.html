@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw Data vs Pivot Table Comparison</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #beb7df 0%, #aba9bf 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #34113f, #beb7df);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .comparison {
+            display: flex;
+            min-height: 600px;
+        }
+        
+        .side {
+            flex: 1;
+            padding: 0;
+            position: relative;
+        }
+        
+        .left-side {
+            background: #fff5f5;
+            border-right: 3px solid #868784;
+        }
+        
+        .right-side {
+            background: #d4f2d2;
+        }
+        
+        .side-header {
+            padding: 20px;
+            font-weight: bold;
+            font-size: 1.3em;
+            text-align: center;
+            border-bottom: 2px solid;
+        }
+        
+        .left-side .side-header {
+            background: #868784;
+            color: white;
+            border-color: #34113f;
+        }
+        
+        .right-side .side-header {
+            background: #34113f;
+            color: white;
+            border-color: #aba9bf;
+        }
+        
+        .raw-data {
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.2;
+            overflow: hidden;
+            height: 520px;
+            position: relative;
+        }
+        
+        .data-row {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            padding: 2px 0;
+        }
+        
+        .data-row:nth-child(odd) {
+            background: #f9f9f9;
+        }
+        
+        .data-cell {
+            padding: 3px 8px;
+            border-right: 1px solid #ddd;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .cell-1 { width: 60px; }
+        .cell-2 { width: 120px; }
+        .cell-3 { width: 80px; }
+        .cell-4 { width: 140px; }
+        .cell-5 { width: 80px; }
+        .cell-6 { width: 80px; }
+        
+        .overwhelm-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(transparent, rgba(255,255,255,0.95));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #868784;
+            font-size: 16px;
+        }
+        
+        .pivot-table {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 520px;
+        }
+        
+        .pivot-summary {
+            background: white;
+            border: 2px solid #34113f;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .pivot-header {
+            background: #34113f;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .pivot-content {
+            padding: 20px;
+        }
+        
+        .pivot-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        
+        .pivot-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            background: #f8f9fa;
+            margin-top: 10px;
+            padding: 12px 0;
+        }
+        
+        .dept-name {
+            flex: 2;
+            font-weight: 500;
+        }
+        
+        .completion-rate {
+            flex: 1;
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .rate-high { color: #34113f; }
+        .rate-med { color: #aba9bf; }
+        .rate-low { color: #868784; }
+        
+        .insights {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(212, 242, 210, 0.3);
+            border-radius: 6px;
+            border-left: 4px solid #34113f;
+        }
+        
+        .insights h4 {
+            margin: 0 0 10px 0;
+            color: #34113f;
+            font-size: 1em;
+        }
+        
+        .insights ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .vs-arrow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 3px solid #beb7df;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #34113f;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>The Power of Pivot Tables</h1>
+            <p>Transform overwhelming data into actionable insights</p>
+        </div>
+        
+        <div class="comparison">
+            <div class="side left-side">
+                <div class="side-header">😰 Raw Data (5,000+ rows)</div>
+                <div class="raw-data">
+                    <div class="data-row">
+                        <div class="data-cell cell-1"><strong>Emp ID</strong></div>
+                        <div class="data-cell cell-2"><strong>Employee Name</strong></div>
+                        <div class="data-cell cell-3"><strong>Department</strong></div>
+                        <div class="data-cell cell-4"><strong>Course Title</strong></div>
+                        <div class="data-cell cell-5"><strong>Status</strong></div>
+                        <div class="data-cell cell-6"><strong>Date</strong></div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1001</div>
+                        <div class="data-cell cell-2">Sarah Johnson</div>
+                        <div class="data-cell cell-3">Marketing</div>
+                        <div class="data-cell cell-4">Digital Marketing Basics</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-01-15</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1002</div>
+                        <div class="data-cell cell-2">Mike Chen</div>
+                        <div class="data-cell cell-3">IT</div>
+                        <div class="data-cell cell-4">Cybersecurity Fundamentals</div>
+                        <div class="data-cell cell-5">Incomplete</div>
+                        <div class="data-cell cell-6">2024-01-12</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1003</div>
+                        <div class="data-cell cell-2">Lisa Wong</div>
+                        <div class="data-cell cell-3">HR</div>
+                        <div class="data-cell cell-4">Employee Relations</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-01-18</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1004</div>
+                        <div class="data-cell cell-2">Tom Rodriguez</div>
+                        <div class="data-cell cell-3">Finance</div>
+                        <div class="data-cell cell-4">Financial Analysis</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-01-20</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1005</div>
+                        <div class="data-cell cell-2">Emma Davis</div>
+                        <div class="data-cell cell-3">Marketing</div>
+                        <div class="data-cell cell-4">Social Media Strategy</div>
+                        <div class="data-cell cell-5">Incomplete</div>
+                        <div class="data-cell cell-6">2024-01-10</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1006</div>
+                        <div class="data-cell cell-2">John Smith</div>
+                        <div class="data-cell cell-3">Operations</div>
+                        <div class="data-cell cell-4">Project Management</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-01-22</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1007</div>
+                        <div class="data-cell cell-2">Ana Garcia</div>
+                        <div class="data-cell cell-3">IT</div>
+                        <div class="data-cell cell-4">Database Management</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-01-25</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1008</div>
+                        <div class="data-cell cell-2">David Kim</div>
+                        <div class="data-cell cell-3">HR</div>
+                        <div class="data-cell cell-4">Diversity & Inclusion</div>
+                        <div class="data-cell cell-5">Incomplete</div>
+                        <div class="data-cell cell-6">2024-01-14</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1009</div>
+                        <div class="data-cell cell-2">Rachel Turner</div>
+                        <div class="data-cell cell-3">Finance</div>
+                        <div class="data-cell cell-4">Budget Planning</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-01-28</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1010</div>
+                        <div class="data-cell cell-2">Steve Miller</div>
+                        <div class="data-cell cell-3">Operations</div>
+                        <div class="data-cell cell-4">Quality Assurance</div>
+                        <div class="data-cell cell-5">Incomplete</div>
+                        <div class="data-cell cell-6">2024-01-16</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1011</div>
+                        <div class="data-cell cell-2">Jennifer Lee</div>
+                        <div class="data-cell cell-3">Marketing</div>
+                        <div class="data-cell cell-4">Content Marketing</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-01-30</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1012</div>
+                        <div class="data-cell cell-2">Alex Thompson</div>
+                        <div class="data-cell cell-3">IT</div>
+                        <div class="data-cell cell-4">Cloud Computing</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-02-01</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1013</div>
+                        <div class="data-cell cell-2">Maria Santos</div>
+                        <div class="data-cell cell-3">HR</div>
+                        <div class="data-cell cell-4">Performance Reviews</div>
+                        <div class="data-cell cell-5">Incomplete</div>
+                        <div class="data-cell cell-6">2024-01-19</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1014</div>
+                        <div class="data-cell cell-2">Kevin Brown</div>
+                        <div class="data-cell cell-3">Finance</div>
+                        <div class="data-cell cell-4">Risk Management</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-02-03</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell cell-1">E1015</div>
+                        <div class="data-cell cell-2">Ashley Wilson</div>
+                        <div class="data-cell cell-3">Operations</div>
+                        <div class="data-cell cell-4">Supply Chain Mgmt</div>
+                        <div class="data-cell cell-5">Complete</div>
+                        <div class="data-cell cell-6">2024-02-05</div>
+                    </div>
+                    
+                    <div class="overwhelm-overlay">
+                        📊 ...and 4,985+ more rows to analyze manually! 😵
+                    </div>
+                </div>
+            </div>
+            
+            <div class="vs-arrow">VS</div>
+            
+            <div class="side right-side">
+                <div class="side-header">😊 Pivot Table Summary</div>
+                <div class="pivot-table">
+                    <div class="pivot-summary">
+                        <div class="pivot-header">
+                            Course Completion by Department
+                        </div>
+                        <div class="pivot-content">
+                            <div class="pivot-row">
+                                <div class="dept-name">IT Department</div>
+                                <div class="completion-rate rate-high">87%</div>
+                            </div>
+                            <div class="pivot-row">
+                                <div class="dept-name">Finance</div>
+                                <div class="completion-rate rate-high">82%</div>
+                            </div>
+                            <div class="pivot-row">
+                                <div class="dept-name">Operations</div>
+                                <div class="completion-rate rate-med">76%</div>
+                            </div>
+                            <div class="pivot-row">
+                                <div class="dept-name">Marketing</div>
+                                <div class="completion-rate rate-med">71%</div>
+                            </div>
+                            <div class="pivot-row">
+                                <div class="dept-name">HR Department</div>
+                                <div class="completion-rate rate-low">64%</div>
+                            </div>
+                            <div class="pivot-row">
+                                <div class="dept-name">Overall Average</div>
+                                <div class="completion-rate">76%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="insights">
+                        <h4>🎯 Instant Insights:</h4>
+                        <ul>
+                            <li>HR needs support (lowest at 64%)</li>
+                            <li>IT performing well (highest at 87%)</li>
+                            <li>3 departments below average</li>
+                            <li>Overall completion trending positive</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
